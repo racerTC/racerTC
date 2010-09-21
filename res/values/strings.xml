@@ -2,4 +2,8 @@
 <resources>
     <string name="hello">Hello World, games!</string>
     <string name="app_name">racertc</string>
+    <string name="single_player_label">SINGLE PLAYER</string>
+    <string name="multiplayer_label">MULTIPLAYER</string>
+    <string name="options_label">OPTIONS</string>
+    <string name="exit_game_label">EXIT GAME</string>
 </resources>

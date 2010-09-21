@@ -1,12 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    >
-<TextView  
-    android:layout_width="fill_parent" 
-    android:layout_height="wrap_content" 
-    android:text="@string/hello"
-    />
+    android:background="@drawable/menu_bg"
+    android:paddingTop="110dip"
+    android:orientation="vertical" >
+    
+    <Button android:id="@+id/single_player"
+    	android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:text="@string/single_player_label" />
+    	
+    <Button android:id="@+id/multiplayer"
+    	android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:text="@string/multiplayer_label" />
+    	
+    <Button android:id="@+id/options"
+    	android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:text="@string/options_label" />
+    	
+    <Button android:id="@+id/exit_game"
+    	android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:text="@string/exit_game_label" />
+
 </LinearLayout>

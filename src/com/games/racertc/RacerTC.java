@@ -62,8 +62,8 @@ public class RacerTC extends Activity implements Callback, GameStateChangeListen
 		//wyrzuca zbedne rzeczy z ekranu:
 		requestWindowFeature( Window.FEATURE_NO_TITLE );
 		
-		//setContentView( R.layout ... )
-		racerView = (RacerView) findViewById(R.id ...savedInstanceState );
+		setContentView(R.layout.main);
+		/*racerView = (RacerView) findViewById(R.id ...savedInstanceState );
 		racerThread = new RacerThread(
 			racerView.getHolder(),
 			racerView.getContext(),
@@ -87,6 +87,7 @@ public class RacerTC extends Activity implements Callback, GameStateChangeListen
 			//wyscigi wznawiaja dzialanie
 			
 		}
+		*/
 	}
 	
 	/**
