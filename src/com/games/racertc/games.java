@@ -10,8 +10,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 
+/*
 public class games extends Activity {
-		/** Called when the activity is first created. */
+		//Called when the activity is first created.
 		@Override
 		public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -44,3 +45,4 @@ public class games extends Activity {
 		}
 		}
 		}
+*/
