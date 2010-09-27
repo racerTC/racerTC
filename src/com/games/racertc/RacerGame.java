@@ -12,11 +12,16 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
 import android.view.Window;
 
-public class RacerTC extends Activity implements Callback, GameStateChangeListener {
+/**
+ * Activity odpowiadajace prowadzenie rozgrywki.
+ */
+public class RacerGame extends Activity implements Callback, GameStateChangeListener {
 	
+	/** Watek obslugujacy glowna petle gry. */
 	private RacerThread racerThread;
 	
-	private RacerView racerView;
+	/** View rozgrywki. */
+	private RacerGameView racerView;
 	
 /*--------------------------------------*/
 /*-            Obsluga menu:           -*/
@@ -67,7 +72,7 @@ public class RacerTC extends Activity implements Callback, GameStateChangeListen
 		setContentView(R.layout.game);
 		/////////////////////////////////
 		
-		racerView = (RacerView) findViewById( R.id.racertc );
+		racerView = (RacerGameView) findViewById( R.id.racergameview );
 		racerThread = new RacerThread(
 			racerView.getHolder(),
 			racerView.getContext(),
@@ -130,45 +135,45 @@ public class RacerTC extends Activity implements Callback, GameStateChangeListen
 /*- Implementacja SurfaceHolder.Callback: -*/
 /*-----------------------------------------*/	
 		
-		/**
-		 * Wolane po zmianie rozdzieczosci Surface'u.
-		 */
-		@Override
-		public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-			racerThread.setResolution( width, height );
-		}
+	/**
+	 * Wolane po zmianie rozdzieczosci Surface'u.
+	 */
+	@Override
+	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+		racerThread.setResolution( width, height );
+	}
 
-		/**
-		 * Wolane po utworzeniu Surface'u. Kiedy Surface jest gotowy, mozemy odpalic watek
-		 * gry.
-		 */
-		@Override
-		public void surfaceCreated(SurfaceHolder holder) {
-			racerThread.start();
-		}
+	/**
+	 * Wolane po utworzeniu Surface'u. Kiedy Surface jest gotowy, mozemy odpalic watek
+	 * gry.
+	 */
+	@Override
+	public void surfaceCreated(SurfaceHolder holder) {
+		racerThread.start();
+	}
 
-		/**
-		 * Wolane po zniszczeniu Surface'u. Blokuje dostep do
-		 * rysowania - bo jak ktos bedzie rysowal po zniszczeniu,
-		 * to moze stac sie cos zlego. Konczy dzialanie programu.
-		 */
-		@Override
-		public void surfaceDestroyed(SurfaceHolder holder) {
-			//TODO jakas blokada dalszego rzsowania
-			//konczy prace watku
-			//racerThread.join(); //czeka na zkonczenie pracy watku
-		}
+	/**
+	 * Wolane po zniszczeniu Surface'u. Blokuje dostep do
+	 * rysowania - bo jak ktos bedzie rysowal po zniszczeniu,
+	 * to moze stac sie cos zlego. Konczy dzialanie programu.
+	 */
+	@Override
+	public void surfaceDestroyed(SurfaceHolder holder) {
+		//TODO jakas blokada dalszego rzsowania
+		//konczy prace watku
+		//racerThread.join(); //czeka na zkonczenie pracy watku
+	}
 
 /*-----------------------------------------*/
 /*-Implementacja GameStateChangeListener: -*/
 /*-----------------------------------------*/			
 		
-		private int gameState;
+	private int gameState;
 		
-		@Override
-		public void onGameStateChange( int gameState ) {
-			this.gameState = gameState;
-			//TODO: reakcja na zmiany stanu.
-		}	
+	@Override
+	public void onGameStateChange( int gameState ) {
+		this.gameState = gameState;
+		//TODO: reakcja na zmiany stanu.
+	}	
 	
 }

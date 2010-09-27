@@ -43,7 +43,7 @@ public final class R {
         public static final int exit_game=0x7f050004;
         public static final int multiplayer=0x7f050002;
         public static final int options=0x7f050003;
-        public static final int racertc=0x7f050000;
+        public static final int racergameview=0x7f050000;
         public static final int single_player=0x7f050001;
     }
     public static final class layout {

@@ -13,7 +13,7 @@ import android.view.SurfaceView;
 /**
  * Klasa przechowujaca View aplikacji i obslugujaca wejscie uzytkownika.
  */
-public class RacerView extends SurfaceView implements GameStateChangeListener {
+public class RacerGameView extends SurfaceView implements GameStateChangeListener {
 
 	//private Context context;
 	
@@ -25,7 +25,7 @@ public class RacerView extends SurfaceView implements GameStateChangeListener {
 	
 	private Presentation presentation;
 	
-	public RacerView( Context context, AttributeSet attrs ) {
+	public RacerGameView( Context context, AttributeSet attrs ) {
 		super( context, attrs );	
 		
 		//ponoc pomaga odbierac zdarzenia klawiszy! :D
