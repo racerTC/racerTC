@@ -3,6 +3,7 @@ package com.games.racertc;
 import com.games.racertc.gamestate.GameStateChangeListener;
 import com.games.racertc.gamestate.StateMachine;
 import com.games.racertc.messages.Message;
+import com.games.racertc.tracks.Track;
 
 /**
  * Klasa odpowiadajaca za symulacje w grze.
@@ -37,6 +38,11 @@ public class Simulation {
 		
 		//krok II - symuluje swiat
 		
+		
+	}
+
+	public void initialise(Track t) {
+		// TODO Auto-generated method stub
 		
 	}
 	

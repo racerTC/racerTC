@@ -62,17 +62,27 @@ public class RacerTC extends Activity implements Callback, GameStateChangeListen
 		//wyrzuca zbedne rzeczy z ekranu:
 		requestWindowFeature( Window.FEATURE_NO_TITLE );
 		
-		setContentView(R.layout.main);
-		/*racerView = (RacerView) findViewById(R.id ...savedInstanceState );
+		/////////////////////////////////
+		//setContentView(R.layout.main);
+		setContentView(R.layout.game);
+		/////////////////////////////////
+		
+		racerView = (RacerView) findViewById( R.id.racertc );
 		racerThread = new RacerThread(
 			racerView.getHolder(),
 			racerView.getContext(),
 			getResources()
 		);
+		racerView.initialise( racerThread.getPresentation() );
 		
 		//Ustawiamy stan gry na INTRO:
 		StateMachine.getInstance().setGameState( GameState.INTRO );
 		gameState = GameState.INTRO;
+		
+		//-uruchamianie rozgrywki "na chama" :P-//
+		racerThread.setupGame();
+		gameState = GameState.GAME_ACTIVE;
+		//--------------------------------------//
 		
 		//rejestruje sie jako obserwator zmian stanu gry:
 		StateMachine.getInstance().addListener( this );
@@ -87,7 +97,6 @@ public class RacerTC extends Activity implements Callback, GameStateChangeListen
 			//wyscigi wznawiaja dzialanie
 			
 		}
-		*/
 	}
 	
 	/**
@@ -130,12 +139,12 @@ public class RacerTC extends Activity implements Callback, GameStateChangeListen
 		}
 
 		/**
-		 * Wolane po utworzeniu Surface'u.
+		 * Wolane po utworzeniu Surface'u. Kiedy Surface jest gotowy, mozemy odpalic watek
+		 * gry.
 		 */
 		@Override
 		public void surfaceCreated(SurfaceHolder holder) {
-			//TODO nie wiem co
-
+			racerThread.start();
 		}
 
 		/**

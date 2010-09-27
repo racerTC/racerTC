@@ -1,6 +1,5 @@
 package com.games.racertc.gamestate;
 
-import java.util.Iterator;
 import java.util.Vector;
 
 /**
@@ -58,7 +57,9 @@ public class StateMachine {
 /*-       Implementacja singletonu:       -*/
 /*-----------------------------------------*/	
 	
-	private StateMachine() {};
+	private StateMachine() {
+		listeners = new Vector< GameStateChangeListener >();
+	};
 	
 	private static StateMachine instance;
 
