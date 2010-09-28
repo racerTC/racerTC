@@ -1,5 +1,6 @@
 package com.games.racertc;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import com.games.racertc.messages.Message;
@@ -14,7 +15,9 @@ public class MessageQueue {
 /*-----------------------------------------*/		
 	
 	/** Prywatny konstruktor. */
-	private MessageQueue() {}
+	private MessageQueue() {
+		messageQueue = new LinkedList< Message >();
+	}
 	
 	/** MessageQueue jest singletonem, ktorego jedyna dozwolona instancje okresla
 	 * ta zmienna. */

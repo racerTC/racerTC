@@ -1,6 +1,5 @@
-package com.games.racertc;
+package com.games.racertc.messages;
 
-import com.games.racertc.messages.Message;
 
 /* Klasa produkujaca wiadomosci przesylane miedzy watkami gry. W szczegolnosci
  * sa to wiadomosci informujace o sterowaniu dokonywanym przez gracza. */
@@ -10,11 +9,7 @@ public class MessageFactory {
 /*-                  Stale:                  -*/
 /*--------------------------------------------*/		
 	
-/** Flaga oznaczajaca poczatek ruchu. */
-public final static int BEGIN = 0;
 
-/** Flaga oznaczajaca zakonczenie ruchu. */
-public final static int END = 1;
 
 /*--------------------------------------------*/
 /*-   Implementacja tworzenia wiadomosci:    -*/
@@ -26,13 +21,19 @@ public final static int END = 1;
 	 * okresla koniecznosc zakocnzenia lub rozpoczecia ruchu.
 	 * @return Zamowiona wiadomosci.
 	 */
-	public Message createMessageForward( int flag ) {
-		if( flag == BEGIN )
-			return null; //zwraca "przyspieszaj do przodu"
-		else return null; //zwraca "przestan przyspieszac do przodu"
+	public Message createMovementMessage( int owner, int flags ) {
+		return new Message( owner, flags );
 	}
 	
 	//itd
+	
+/*--------------------------------------------*/
+/*-    Implementacja usuwania wiadomosci:    -*/
+/*--------------------------------------------*/		
+	
+	public void disposeMessage( Message m ) {
+		//recykling m
+	}
 	
 /*--------------------------------------------*/
 /*- Implementacja singletonu MessageFactory: -*/

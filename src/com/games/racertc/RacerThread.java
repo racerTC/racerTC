@@ -6,6 +6,7 @@ import com.games.racertc.gamestate.StateMachine;
 import com.games.racertc.objects.Car;
 import com.games.racertc.other.Vec2D;
 import com.games.racertc.tracks.Track;
+import com.games.racertc.ui.UIManager;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -46,18 +47,6 @@ public class RacerThread extends Thread implements GameStateChangeListener {
 /*-----------------------------------------*/		
 	
 	/**
-	 * Pozwala pobrac referencje podsystemu rysujacego.<br>
-	 * <br>
-	 * Nie lubie tej czesci. Sluzy bezposrednio wymianie danych miedzy watkiem
-	 * UI a Presentation w celu ustalenia pozycji interaktywnych elementow. Byc
-	 * moze lepiej bylo by zrobic jakiegos listenera?
-	 * @return Aktywny obiekt Presentation.
-	 */
-	public Presentation getPresentation() {
-		return presentation;
-	}
-	
-	/**
 	 * Informuje watek gry o zmianie rozdzielczosci ekranu. Musi byc wolane po kazdej
 	 * zmianie rozdzielczosci.
 	 * @param width Nowa szerokosc ekranu.
@@ -74,6 +63,15 @@ public class RacerThread extends Thread implements GameStateChangeListener {
 			//ja presentation po jej utworzeniu.
 		}
 	}
+	
+	/**
+	 * Wiaze glowny watek gry z wybranym menadzerem wejscia. Od tej pory bedzie on
+	 * uzywany do rysowania UI.
+	 * @param uiManager
+	 */
+	public void setUIManager(UIManager uiManager) {
+		presentation.setUIManager( uiManager );
+	}	
 	
 	/**
 	 * Przygotowuje gre do uruchomienia wlasciwej rozgrywki.
@@ -151,7 +149,7 @@ public class RacerThread extends Thread implements GameStateChangeListener {
 				
 				
 				//odpal symulacje
-				//simulation.simulate( dt ); //dt - kwant czasu
+				simulation.simulate( /*dt*/ 33 ); //dt - kwant czasu
 				
 				//odpal rysowanie
 				presentation.drawGame();
@@ -177,6 +175,6 @@ public class RacerThread extends Thread implements GameStateChangeListener {
 	public void onGameStateChange( int gameState ) {
 		this.gameState = gameState;
 		//TODO: reakcja na zmiany stanu.
-	}	
+	}
 	
 }

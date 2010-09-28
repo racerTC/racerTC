@@ -99,6 +99,15 @@ public Bitmap getTrackGraphics() {
 		objects.add( car );
 		cars_added++;
 	}
+
+	/**
+	 * Pozwala uzyskac dostep do danych samochodu o podanym id.
+	 * @param id Identyfikator samochodu.
+	 * @return Referencja do obiektu opisujacego dane samochodu.
+	 */
+	public Car getCar( int id ) {
+		return cars.get( id );
+	}
 	
 	
 	

@@ -3,6 +3,8 @@ package com.games.racertc;
 import com.games.racertc.gamestate.GameState;
 import com.games.racertc.gamestate.GameStateChangeListener;
 import com.games.racertc.gamestate.StateMachine;
+import com.games.racertc.ui.SingleTouchUI;
+import com.games.racertc.ui.UIManager;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -54,6 +56,24 @@ public class RacerGame extends Activity implements Callback, GameStateChangeList
 	}
 	
 /*--------------------------------------*/
+/*-          Zarzadzanie UI:           -*/
+/*--------------------------------------*/
+	
+	/** UIManager. */
+	private UIManager uiManager;
+	
+	/**
+	 * 
+	 * @param uiManager
+	 */
+	private void dispatchUIManager( UIManager uiManager ) {
+		//if( uiManager != null ) ???;
+		this.uiManager = uiManager;
+		racerView.setOnTouchListener( uiManager );
+		racerThread.setUIManager( uiManager );
+	}
+	
+/*--------------------------------------*/
 /*-     Obsluga zdarzen activity:      -*/
 /*--------------------------------------*/
 	
@@ -72,13 +92,18 @@ public class RacerGame extends Activity implements Callback, GameStateChangeList
 		setContentView(R.layout.game);
 		/////////////////////////////////
 		
+		//tworzy View aplikacji:
 		racerView = (RacerGameView) findViewById( R.id.racergameview );
+		//tworzy obiekt zarzadzajacy glowna petla gry:
 		racerThread = new RacerThread(
 			racerView.getHolder(),
 			racerView.getContext(),
 			getResources()
 		);
-		racerView.initialise( racerThread.getPresentation() );
+		//pozwala przygotowac sie do pracy RacerGameView
+		racerView.initialise();
+		//tworzy mendzera UI:
+		dispatchUIManager( new SingleTouchUI( getResources() ) );
 		
 		//Ustawiamy stan gry na INTRO:
 		StateMachine.getInstance().setGameState( GameState.INTRO );
@@ -141,6 +166,7 @@ public class RacerGame extends Activity implements Callback, GameStateChangeList
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
 		racerThread.setResolution( width, height );
+		uiManager.setResolution( width, height );
 	}
 
 	/**

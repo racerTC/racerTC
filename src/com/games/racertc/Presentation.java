@@ -6,6 +6,7 @@ import com.games.racertc.objects.Car;
 import com.games.racertc.objects.GameObject;
 import com.games.racertc.other.Vec2D;
 import com.games.racertc.tracks.Track;
+import com.games.racertc.ui.UIManager;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -21,31 +22,12 @@ import android.view.SurfaceHolder;
 public class Presentation {
 
 	/** Uchwyt do SurfaceHolder. */
-	final SurfaceHolder surfaceHolder;
+	private final SurfaceHolder surfaceHolder;
 	
 	/** Uchwyt do zasobow. */
-	final Resources resources;
+	private final Resources resources;
 	
-	/** Tajemnicze obiekty graficzne. */
-	final Bitmap galka;
-	final Bitmap kolko;
-	
-	/** Tajemnicze parametry tajemniczych obiektow graficznych. */
-	float xoffset = 0f;
-	float yoffset = 0f;
-	
-	/**
-	 * Pozwala wstrzyknac do obiektu prezentacji przesuniecie galki sterujacej
-	 * ruchem pojazdu. Metoda bezpieczna przy uzyciu wielowatkowym.
-	 * @param x
-	 * @param y
-	 */
-	public void injectOffsets( float x, float y ) {
-		synchronized( this ) {
-			xoffset = x;
-			yoffset = y;
-		}
-	}
+	private UIManager uiManager;
 	
 	/** Szerokosc ekranu. */
 	int width = 1024;
@@ -65,15 +47,26 @@ public class Presentation {
 	public Presentation( SurfaceHolder surfaceHolder, Resources resources ) {
 		this.surfaceHolder = surfaceHolder;
 		this.resources = resources;
-		this.galka = BitmapFactory.decodeResource(resources, R.drawable.left_right_point_selection);
-		this.kolko = BitmapFactory.decodeResource(resources, R.drawable.gear_lever);
 	}
 	
+	/**
+	 * Przygotowuje Presentation do pracy. Powinno byc wolane kazdorazowo przed rozpoczeciem
+	 * nowej rozgrywki.
+	 * @param track Trasa na ktorej odbywac sie bedzie rozgrywka.
+	 */
 	public void initialise( Track track ) {
 		this.track = track;
 		//trackBitmap = track.getTrackGraphics();
 	}
 
+	/**
+	 * Ustawia menadzera interface'u uzytkownika wykorzystywanego do rysowania UI.
+	 * @param uiManager Menadzer UI, ktory bedzie od teraz uzywany.
+	 */
+	public void setUIManager( UIManager uiManager ) {
+		this.uiManager = uiManager;
+	}
+	
 	public void setResolution( int width, int height ) {
 		this.width = width;
 		this.height = height;
@@ -137,7 +130,7 @@ public class Presentation {
 		//oblicza przesuniecie obiektu od srodka ekranu:
 		obj_pos.set(
 				obj_pos.getX() - camPos.getX(),
-				obj_pos.getX() - camPos.getY()
+				obj_pos.getY() - camPos.getY()
 		); //TODO: a jakby tak zrobic Vec2I.substract( Vec2I )?
 		//ale tak naprawde teraz mamy przesuniecie wzgledem punktu (0,0)
 		//totez przesuwamy obiekt tak, aby faktycznie znalazl sie tam
@@ -196,22 +189,9 @@ public class Presentation {
 		}
 		
 		//na koniec rysuje UI:
-		drawUI( canvas );
+		uiManager.drawUI( canvas );
 		
 		surfaceHolder.unlockCanvasAndPost( canvas );
-	}
-	
-	/**
-	 * Rysuje UI.
-	 */
-	private void drawUI( Canvas canvas ) {
-		int gpx = 40;
-		int gpy = 40;
-		synchronized( this ) {
-			gpx += xoffset;
-			gpy += yoffset;
-		}
-		canvas.drawBitmap( galka, gpx, gpy, null );
 	}
 	
 	/**
