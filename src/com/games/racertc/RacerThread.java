@@ -12,6 +12,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.os.Debug;
+import android.os.SystemClock;
 import android.view.SurfaceHolder;
 
 /**
@@ -19,6 +20,19 @@ import android.view.SurfaceHolder;
  * za symulacje i rysowanie w grze, a takze posredniczy w komunikacji z nimi.
  */
 public class RacerThread extends Thread implements GameStateChangeListener {
+	
+	/**
+	 * Docelowy czas trwania pojedynczej klatki w milisekundach. Obecne
+	 * ustawienie to 33 ms, co daje okolo 30 fps.
+	 */
+	public final static long TARGET_FRAME_DURATION = 33;
+	
+	/**
+	 * Okresla, czy bedzie stosowane limitowanie liczby klatek na sekunde.
+	 * Jezeli tak, docelowa dlugosc klatki jest okreslana przez stala
+	 * TARGET_FRAME_DURATION.
+	 */
+	public final static boolean LIMIT_FRAMERATE = true;
 	
 	final SurfaceHolder surfaceHolder;
 	
@@ -93,7 +107,7 @@ public class RacerThread extends Thread implements GameStateChangeListener {
 		// Przygotowuje przykladowa gre     //
 		//////////////////////////////////////
 		//samochod:
-		Car c = new Car( 2.0f, resources.getDrawable( R.drawable.new2_car_red ) );
+		Car c = new Car( 2.0f, resources.getDrawable( R.drawable.car_red ) );
 		c.setPosition( new Vec2D( 25f,25f ) );
 		//trasa:
 		Track t = null;
@@ -101,11 +115,7 @@ public class RacerThread extends Thread implements GameStateChangeListener {
 		Debug.MemoryInfo dbmi2 = new Debug.MemoryInfo();
 		Debug.getMemoryInfo( dbmi1 );
 		int bg = dbmi1.otherSharedDirty;
-		try {
-			t = new Track( BitmapFactory.decodeResource(resources, R.drawable.tor_big) );
-		} catch( Exception e ) {
-			e.printStackTrace();
-		}
+		t = new Track( BitmapFactory.decodeResource(resources, R.drawable.tor) );
 		Debug.getMemoryInfo( dbmi2 );
 		int en = dbmi2.otherSharedDirty;
 		int imgs = en - bg;
@@ -130,7 +140,21 @@ public class RacerThread extends Thread implements GameStateChangeListener {
 	@Override
 	public void run() {
 		
+		long previous_time = SystemClock.uptimeMillis();
+		//do mierzenia sredniej ilosci fpsow:
+		//long ttm = 0, fct = 0;
+		
 		while( run ) {
+			
+			long current_time = SystemClock.uptimeMillis();
+			long time_quantum = current_time - previous_time;
+			previous_time = current_time;
+			
+			//Obliczanie FPS'ow:
+			//ttm += time_quantum;
+			//fct += 1;
+			//float fps_avg = fct / ttm;
+			
 			switch( gameState ) {
 			
 			case GameState.INTRO:
@@ -138,28 +162,30 @@ public class RacerThread extends Thread implements GameStateChangeListener {
 				
 				break;
 				
-			case GameState.MAIN_MENU:
-				//sprawdza, czy przypadkiem uzytkownik nie nacisnal jakiegos guzika
-				// (odbiera zdarzenia)
-				//rozkazuje Presentation rysowac menu glowne
-				break;	
-				
 			case GameState.GAME_ACTIVE:
 				/* Gra aktywna: */
 				
 				
 				//odpal symulacje
-				simulation.simulate( /*dt*/ 33 ); //dt - kwant czasu
+				if( time_quantum > 0 )
+					//TODO: time_accumultor i dalsze kwantowania np. po 5 lub 10 ms
+					simulation.simulate( time_quantum ); //dt - kwant czasu
 				
 				//odpal rysowanie
 				presentation.drawGame();
 				/* jezeli stan w menu, rysuj menu. */
 				
-				//spij ile trzeba
 				break;
 			}
 			
-			
+			if( LIMIT_FRAMERATE ) {
+				//oblicza czas jaki watek bedzie spal
+				long finished_time = SystemClock.uptimeMillis();
+				long sleep_time = TARGET_FRAME_DURATION - ( finished_time - current_time );
+				//jezeli zostal jeszcze czas wolny, watek odpoczywa
+				if( sleep_time > 0 )
+					SystemClock.sleep( sleep_time );
+			}
 			
 		}
 		

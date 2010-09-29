@@ -12,32 +12,28 @@ public final class R {
     }
     public static final class drawable {
         public static final int car_red=0x7f020000;
-        public static final int car_white=0x7f020001;
-        public static final int down=0x7f020002;
-        public static final int gear_lever=0x7f020003;
-        public static final int icon=0x7f020004;
-        public static final int left=0x7f020005;
-        public static final int left_right_point_selection=0x7f020006;
-        public static final int menu_bg=0x7f020007;
-        public static final int menu_bg_land=0x7f020008;
-        public static final int menu_exit_s=0x7f020009;
-        public static final int menu_exit_s_off=0x7f02000a;
-        public static final int menu_exit_s_on=0x7f02000b;
-        public static final int menu_multi_s=0x7f02000c;
-        public static final int menu_multi_s_off=0x7f02000d;
-        public static final int menu_multi_s_on=0x7f02000e;
-        public static final int menu_options_s=0x7f02000f;
-        public static final int menu_options_s_off=0x7f020010;
-        public static final int menu_options_s_on=0x7f020011;
-        public static final int menu_single_s=0x7f020012;
-        public static final int menu_single_s_off=0x7f020013;
-        public static final int menu_single_s_on=0x7f020014;
-        public static final int new2_car_red=0x7f020015;
-        public static final int right=0x7f020016;
-        public static final int tor=0x7f020017;
-        public static final int tor_big=0x7f020018;
-        public static final int trasa_01=0x7f020019;
-        public static final int up=0x7f02001a;
+        public static final int gear_lever=0x7f020001;
+        public static final int icon=0x7f020002;
+        public static final int left_right_point_selection=0x7f020003;
+        public static final int menu_bg=0x7f020004;
+        public static final int menu_bg_land=0x7f020005;
+        public static final int menu_exit_s=0x7f020006;
+        public static final int menu_exit_s_off=0x7f020007;
+        public static final int menu_exit_s_on=0x7f020008;
+        public static final int menu_multi_s=0x7f020009;
+        public static final int menu_multi_s_off=0x7f02000a;
+        public static final int menu_multi_s_on=0x7f02000b;
+        public static final int menu_options_s=0x7f02000c;
+        public static final int menu_options_s_off=0x7f02000d;
+        public static final int menu_options_s_on=0x7f02000e;
+        public static final int menu_single_s=0x7f02000f;
+        public static final int menu_single_s_off=0x7f020010;
+        public static final int menu_single_s_on=0x7f020011;
+        public static final int tor=0x7f020012;
+        public static final int ui_down=0x7f020013;
+        public static final int ui_left=0x7f020014;
+        public static final int ui_right=0x7f020015;
+        public static final int ui_up=0x7f020016;
     }
     public static final class id {
         public static final int exit_game=0x7f050004;
