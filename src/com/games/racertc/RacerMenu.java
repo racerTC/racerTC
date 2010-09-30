@@ -26,7 +26,7 @@ public class RacerMenu extends Activity implements OnClickListener{
 	public void onClick(View v) {
     	switch(v.getId()) {
     	case R.id.single_player:
-    		Intent i = new Intent(this, RacerGame.class);
+    		Intent i = new Intent(this, RacerCarMenu.class);
     		startActivity(i);
     		break;
     	case R.id.exit_game:

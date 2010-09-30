@@ -12,6 +12,8 @@
             </intent-filter>
         </activity>
         
+        <activity android:name=".RacerCarMenu" />
+        <activity android:name=".RacerTrackMenu" />
         <activity android:name=".RacerGame" />
 
     </application>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:paddingLeft="10dip"
+	android:paddingRight="10dip"
+	android:paddingTop="15dip"
+	android:background="@drawable/menu_bg"
+	android:orientation="vertical" >
+	
+	<Button android:id="@+id/prev"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:background="@drawable/menu_prev" />
+	
+	<LinearLayout android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+	    android:paddingTop="60dip"
+	    android:orientation="horizontal"
+	    android:gravity="center" >
+    
+	    <TableLayout android:layout_width="wrap_content"
+	    	android:layout_height="fill_parent" >
+	    
+	    	<TableRow>	
+			    <Button android:id="@+id/track_01"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:background="@drawable/menu_circuit_button_01" />
+			    	
+			    <Button android:id="@+id/track_02"
+			    	android:layout_width="wrap_content"
+			    	android:layout_height="wrap_content"
+			    	android:background="@drawable/menu_circuit_button_02" />
+	    	</TableRow>
+	    	<TableRow>
+			    <Button android:id="@+id/track_03"
+			    	android:layout_width="wrap_content"
+			    	android:layout_height="wrap_content"
+			    	android:background="@drawable/menu_circuit_button_03" />
+			    	
+			    <Button android:id="@+id/track_04"
+			    	android:layout_width="wrap_content"
+			    	android:layout_height="wrap_content"
+			    	android:background="@drawable/menu_circuit_button_04" />
+	    	</TableRow>
+		
+		</TableLayout>
+	    
+	</LinearLayout>
+</LinearLayout>
