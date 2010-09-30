@@ -8,6 +8,7 @@ import java.util.Vector;
 
 import com.games.racertc.objects.Car;
 import com.games.racertc.objects.GameObject;
+import com.games.racertc.other.Vec2D;
 
 import android.graphics.Bitmap;
 
@@ -107,6 +108,16 @@ public Bitmap getTrackGraphics() {
 	 */
 	public Car getCar( int id ) {
 		return cars.get( id );
+	}
+
+	/**
+	 * Zwraca opor trasy w danym punkcie. Opor trasy bedzie odejmowany od
+	 * przyspieszenia samochodu, o ile porusza sie on ruchem przyspieszonym.
+	 * @param position
+	 * @return
+	 */
+	public float getDecceleration( Vec2D position ) {
+		return 0.0008f;
 	}
 	
 	

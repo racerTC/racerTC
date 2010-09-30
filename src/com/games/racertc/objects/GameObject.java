@@ -64,11 +64,11 @@ public abstract class GameObject {
 	}
 	
 	/**
-	 * Pozwala sprawdzic kat obrotu pojazdu.
+	 * Pozwala sprawdzic kat obrotu obiektu.
 	 * @return Kat pod jakim obrocony jest obiekt.
 	 */
 	public float getRotation() {
-		return 0f; //TODO: Obliczanie kata obrotu pojazdu
+		return 0f;
 	}
 	
 	/**

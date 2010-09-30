@@ -236,10 +236,10 @@ public class Presentation {
 		//zapisuje macierz przekrztalcen
 		canvas.save();
 		//przygotowuje Canvas do rysowania samochodu:
-			//krok II: obraca samochod
-		canvas.rotate( car.getRotation() );
-			//krok I: przesuwa samochod na wlasciwa pozycje na ekranie
+			//krok II: przesuwa samochod na wlasciwa pozycje na ekranie
 		canvas.translate( screenPos.getX(), screenPos.getY() );
+			//krok I: obraca samochod
+		canvas.rotate( (float) Math.toDegrees( car.getRotation() ) );
 		
 		//rysuje samochod
 		car.getDrawable().draw( canvas );

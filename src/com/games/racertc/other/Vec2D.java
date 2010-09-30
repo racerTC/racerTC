@@ -24,12 +24,41 @@ public class Vec2D {
 		);
 	}	
 	
+	/**
+	 * Tworzy nowy wektor o wartosci (0,0).
+	 */
 	public Vec2D() {
 		set( 0f, 0f );
 	}
 	
+	/**
+	 * Tworzy nowy wektor o wartosci (x,y). 
+	 * @param x Dlugosc x wektora.
+	 * @param y Dlugosc y wektora.
+	 */
 	public Vec2D( float x, float y ) {
 		set( x, y );
+	}
+	
+	/**
+	 * Tworzy nowy wektor jenostkowy obrocony o kat a.
+	 * @param f Kat obrotu wektora (w radianach).
+	 */
+	public Vec2D( float a ) {
+		x = 1f;
+		y = 0f;
+		rotate( a );
+	}
+
+	/**
+	 * Obraca aktualny wektor o kat a.
+	 * @param a Kat obrotu wektora (w radianach).
+	 */
+	public void rotate( float a ) {
+		float old_x = x;
+		float old_y = y;
+		x = (float) (old_x * Math.cos( a ) - old_y * Math.sin( a ));
+		y = (float) (old_x * Math.sin( a ) + old_y * Math.cos( a ));
 	}
 	
 	public void set( float x, float y ) {
@@ -37,6 +66,11 @@ public class Vec2D {
 		this.setY(y);
 	}
 
+	public void set( Vec2D velocity ) {
+		this.x = velocity.x;
+		this.y = velocity.y;
+	}	
+	
 	public void setX( float x ) {
 		this.x = x;
 	}
@@ -56,6 +90,61 @@ public class Vec2D {
 	public void add( float x, float y ) {
 		this.x += x;
 		this.y += y;
+	}
+
+	public float magnitude() {
+		return (float) Math.sqrt( x * x + y * y );
+	}
+	
+	/**
+	 * Pozwala zbadac nachylenia wektora do osi OX.
+	 * @return Kat nachylenia wektora do osi OX.
+	 */
+	public float getAngle() {
+		float angle = (float) Math.acos( x / magnitude() );
+		if( x > 0 ) {
+			//return angle;
+			if( y >= 0 ) {
+				return angle;
+			} else {
+				return 6.28f - angle;
+			}
+		} else if( x < 0 ) {
+			if( y >= 0 ) {
+				return angle;
+			} else {
+				return 6.28f - angle;
+			}
+		} else {
+			if( y >= 0 ) return 0.5f * 3.14f;
+				else return 0.75f * 6.28f;
+		}
+	}
+
+	/**
+	 * Pozwala zbadac nachylenia wektora do osi OX. Funkcja zoptymalizowana do pracy z
+	 * wektorami jednostkowymi.
+	 * @return Kat nachylenia wektora do osi OX.
+	 */
+	public float getAngleForUnitVector() {
+		float angle = (float) Math.acos( x );
+		if( x > 0 ) {
+			//return angle;
+			if( y >= 0 ) {
+				return angle;
+			} else {
+				return 6.28f - angle;
+			}
+		} else if( x < 0 ) {
+			if( y >= 0 ) {
+				return angle;
+			} else {
+				return 6.28f - angle;
+			}
+		} else {
+			if( y >= 0 ) return 0.5f * 3.14f;
+				else return 0.75f * 6.28f;
+		}
 	}
 	
 }

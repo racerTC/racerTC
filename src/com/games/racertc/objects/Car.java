@@ -21,22 +21,52 @@ public class Car extends GameObject {
 		presentation.drawGameObject( this, canvas, screenPos );
 	}	
 	
-	/** Predkosc maksymalna. */
-	private float speed;
+/*-----------------------------------------*/
+/*-          Parametry jazdy:             -*/
+/*-----------------------------------------*/		
 	
-	private float acceleration;
+	/**
+	 * Jednostkowy wektor okreslajacy zwrot i kierunek wektora predkosci.
+	 */
+	protected Vec2D velocity = new Vec2D( 0f );
 	
-	private float grip;
+	/**
+	 * Jednostkowy wektor okreslajacy gdzie znajduje sie przod samochodu.
+	 */
+	protected Vec2D direction = new Vec2D( 0f );
 	
-	private float turn;
+	/** Obecna szybkosd samochodu. */
+	public float speed = 0f;
 	
-	///
+	/** Maksyma szybkosc samochodu. */
+	public float maxSpeed = 1f;
 	
-	private float velocity;
+	/** Maksymalny kat skretu samochodu. */
+	public float maxTurningAngle = (float) Math.toRadians( 6f );
 	
-	public float getVelocity() { return velocity; };
+	/** Ile stopni w kazdej klatce samochod bedzie skrecal bardziej niz w poprzedniej. */
+	public float turningAngleStep = (float) Math.toRadians( 0.4f );
 	
-	public void setVelocity( float velocity ) { this.velocity = velocity; };
+	/** Obecny kat skretu samochodu. */
+	public float currentTurningAngle = 0f;
+	
+	/** Przyczepnosc. */
+	public float adhesion = 1f;
+	
+	public float adhesionSide = 1f;
+	
+	/** Przyspieszenie samochodu. */
+	public float acceleration = 0.0018f;
+	
+	/** Przyspieszenie hamulcow */
+	public float accelerationBreaks = -0.0025f;
+	
+	/** Przyspieszenie hamulca recznego. */
+	public float accelerationHandbreak = -0.005f;
+	
+	public Vec2D getVelocity() { return velocity; };
+	
+	public Vec2D getDirection() { return direction; };
 	
 	/**
 	 * Flagi okreslajace aktualne zachowanie samochodu.
@@ -50,6 +80,10 @@ public class Car extends GameObject {
 	
 	public int getBehaviourFlags() {
 		return behaviourFlags;
+	}
+	
+	public float getRotation() {
+		return direction.getAngle();
 	}
 	
 }
