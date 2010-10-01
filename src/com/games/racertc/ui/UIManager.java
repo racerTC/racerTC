@@ -24,10 +24,10 @@ public abstract class UIManager implements OnTouchListener, GameStateChangeListe
 	protected MessageFactory messageFactory;
 	
 	/** Szerokosc ekranu. */
-	protected int width = 1024;
+	protected float width = 1024;
 	
 	/** Wysokosc ekranu. */
-	protected int height = 768;
+	protected float height = 768;
 	
 	/**
 	 * Konstruktor klasy buforujacy obiekty MessageQueue i MessageFactory. Powinien
@@ -47,8 +47,8 @@ public abstract class UIManager implements OnTouchListener, GameStateChangeListe
 	 * @param height Nowa wysokosc ekranu.
 	 */
 	public void setResolution( int width, int height ) {
-		this.width = width;
-		this.height = height;
+		this.width = (float) width;
+		this.height = (float) height;
 	}
 	
 /*-----------------------------------------*/

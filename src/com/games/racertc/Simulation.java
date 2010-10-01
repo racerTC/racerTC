@@ -59,12 +59,17 @@ public class Simulation {
 		float acceleration = 0f;
 		
 		if( (bhv & Message.FLAG_UP) != 0 ) {
-			acceleration += c.acceleration;
+			if( c.speed < c.maxSpeed * c.requestedSpeed )
+				acceleration += c.acceleration;
+			else {
+				int j = 50;
+			}
 		}
 			
 		if( (bhv & Message.FLAG_DOWN) != 0 ) {
 			//TODO: rozroznienie hamulce/wsteczny
-			acceleration -= c.acceleration;
+			if( c.speed > -( c.maxSpeed * c.requestedSpeed ) )
+				acceleration -= c.acceleration;
 		}
 
 		if( (bhv & (Message.FLAG_RIGHT | Message.FLAG_LEFT) ) == 0 ) {
@@ -73,18 +78,20 @@ public class Simulation {
 		
 			if( c.speed != 0f && (bhv & Message.FLAG_RIGHT) != 0 ) {
 				if( c.currentTurningAngle < 0f ) c.currentTurningAngle = 0f;
-				c.currentTurningAngle += c.turningAngleStep;
-				if( c.currentTurningAngle > c.maxTurningAngle )
-					c.currentTurningAngle = c.maxTurningAngle;
+				if( c.currentTurningAngle < c.maxTurningAngle * c.requestedTurningAngle )
+					c.currentTurningAngle += c.turningAngleStep;
+				else
+					c.currentTurningAngle -= c.turningAngleStep;
 				c.getDirection().set( c.getVelocity() );
 				c.getVelocity().rotate( c.currentTurningAngle );
 			}
 			
 			if( c.speed != 0f && (bhv & Message.FLAG_LEFT) != 0 ) {
 				if( c.currentTurningAngle > 0f ) c.currentTurningAngle = 0f;
-				c.currentTurningAngle -= c.turningAngleStep;
-				if( c.currentTurningAngle < -c.maxTurningAngle )
-					c.currentTurningAngle = -c.maxTurningAngle;
+				if( c.currentTurningAngle > -(c.maxTurningAngle * c.requestedTurningAngle) )
+					c.currentTurningAngle -= c.turningAngleStep;
+				else
+					c.currentTurningAngle += c.turningAngleStep;
 				c.getDirection().set( c.getVelocity() );
 				c.getVelocity().rotate( c.currentTurningAngle );
 			}
@@ -102,10 +109,11 @@ public class Simulation {
 		c.speed += acceleration * (float) dt;
 		if( speed_sign == -Math.signum(c.speed) )
 			c.speed = 0;
-		if( c.speed > c.maxSpeed )
-			c.speed = c.maxSpeed;
-		if( c.speed < -c.maxSpeed )
-			c.speed = -c.maxSpeed;
+		//obsoletowe:
+		//if( c.speed > c.maxSpeed )
+		//	c.speed = c.maxSpeed;
+		//if( c.speed < -c.maxSpeed )
+		//	c.speed = -c.maxSpeed;
 		
 		//gdy mamy przyczepnosc:
 		

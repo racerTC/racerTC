@@ -41,6 +41,8 @@ public class Car extends GameObject {
 	/** Maksyma szybkosc samochodu. */
 	public float maxSpeed = 1f;
 	
+	public float requestedSpeed = 0f;
+	
 	/** Maksymalny kat skretu samochodu. */
 	public float maxTurningAngle = (float) Math.toRadians( 6f );
 	
@@ -49,6 +51,8 @@ public class Car extends GameObject {
 	
 	/** Obecny kat skretu samochodu. */
 	public float currentTurningAngle = 0f;
+	
+	public float requestedTurningAngle = 0f;
 	
 	/** Przyczepnosc. */
 	public float adhesion = 1f;
@@ -76,6 +80,8 @@ public class Car extends GameObject {
 	public void updateBehaviour( Message m ) {
 		behaviourFlags &= m.getMask(); //usuwa stare flagi
 		behaviourFlags |= m.getFlags(); //aplikuje nowe flagi
+		this.requestedSpeed = m.yAxisUsage;
+		this.requestedTurningAngle = m.xAxisUsage;
 	}
 	
 	public int getBehaviourFlags() {

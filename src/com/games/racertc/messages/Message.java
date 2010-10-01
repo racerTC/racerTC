@@ -28,22 +28,26 @@ public class Message {
 	 * dotyczy.
 	 */
 	private int owner;
+	public float xAxisUsage;
+	public float yAxisUsage;
 	
 	/**
 	 * Konstruuje nowa wiadomosc. Powinno byc wolane przez wszystkie klasy potomne.
 	 */
 	public Message() {
 		setOwner( 0 );
-		setFlags( 0 );
+		setFlags( 0, 0f, 0f );
 	}
 	
 	/**
 	 * Konstruuje nowa wiadomosc. Powinno byc wolane przez wszystkie klasy potomne.
 	 * @param owner Identyfikator samochodu, ktorego dotyczy ta wiadomosc.
+	 * @param yAxisUsage 
+	 * @param xAxisUsage 
 	 */
-	public Message( int owner, int flags ) {
+	public Message( int owner, int flags, float xAxisUsage, float yAxisUsage ) {
 		setOwner( owner );
-		setFlags( flags );
+		setFlags( flags, xAxisUsage, yAxisUsage );
 	}
 	
 	/**
@@ -62,8 +66,10 @@ public class Message {
 		return owner;
 	}
 	
-	public void setFlags( int flags ) {
+	public void setFlags( int flags, float xAxisUsage, float yAxisUsage ) {
 		this.flags = flags;
+		this.xAxisUsage = xAxisUsage;
+		this.yAxisUsage = yAxisUsage;
 	}
 	
 	public int getFlags() {

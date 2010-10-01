@@ -3,7 +3,7 @@ package com.games.racertc;
 import com.games.racertc.gamestate.GameState;
 import com.games.racertc.gamestate.GameStateChangeListener;
 import com.games.racertc.gamestate.StateMachine;
-import com.games.racertc.ui.SingleTouchUI;
+import com.games.racertc.ui.JoystickSingleTouchUI;
 import com.games.racertc.ui.UIManager;
 
 import android.app.Activity;
@@ -103,7 +103,7 @@ public class RacerGame extends Activity implements Callback, GameStateChangeList
 		//pozwala przygotowac sie do pracy RacerGameView
 		racerView.initialise();
 		//tworzy mendzera UI:
-		dispatchUIManager( new SingleTouchUI( getResources() ) );
+		dispatchUIManager( new JoystickSingleTouchUI( getResources() ) );
 		
 		//Ustawiamy stan gry na INTRO:
 		StateMachine.getInstance().setGameState( GameState.INTRO );
