@@ -143,7 +143,7 @@ public class JoystickSingleTouchUI extends UIManager {
 
 	@Override
 	public void drawUI(Canvas canvas) { //113
-		float gpx = width - treshold - 57f - 5f;
+		float gpx = width - treshold - 57 - 5f;
 		float gpy = height - treshold - 57f - 5f;
 		synchronized( this ) {
 			gpx += xoffset;
@@ -151,9 +151,9 @@ public class JoystickSingleTouchUI extends UIManager {
 		}
 		
 		if( !allow_input ) {
-			canvas.drawBitmap( joystickIdle , width - 5f - 113f, height - 5f - 113f, null );
+			canvas.drawBitmap( joystickIdle , width - treshold - 113f, height - treshold - 113f, null );
 		} else {
-			canvas.drawBitmap( joystickFwd , width - 5f - 113f, height - 5f - 113f, null );
+			canvas.drawBitmap( joystickFwd , width - treshold - 113f, height - treshold - 113f, null );
 		}
 		canvas.drawBitmap( galka, gpx, gpy, null );
 	}
