@@ -36,22 +36,22 @@ public class RacerCarMenu extends Activity implements OnClickListener {
 			break;
     	case R.id.car_01:
     		i = new Intent(this, RacerTrackMenu.class);
-    		i.putExtra("_car", getResources().getInteger(v.getId()));
+    		i.putExtra("_car", v.getId());
     		startActivity(i);
     		break;
     	case R.id.car_02:
     		i = new Intent(this, RacerTrackMenu.class);
-    		i.putExtra("_car", getResources().getInteger(v.getId()));
+    		i.putExtra("_car", v.getId());
     		startActivity(i);
     		break;
 		case R.id.car_03:
 			i = new Intent(this, RacerTrackMenu.class);
-    		i.putExtra("_car", getResources().getInteger(v.getId()));
+    		i.putExtra("_car", v.getId());
 			startActivity(i);
 			break;
 		case R.id.car_04:
 			i = new Intent(this, RacerTrackMenu.class);
-    		i.putExtra("_car", getResources().getInteger(v.getId()));
+    		i.putExtra("_car", v.getId());
 			startActivity(i);
 			break;
 		}
