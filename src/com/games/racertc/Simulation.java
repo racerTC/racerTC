@@ -80,14 +80,9 @@ public class Simulation {
 					( c.speed > 0f && (bhv & Message.FLAG_RIGHT) != 0 ) ||
 					( c.speed < 0f && (bhv & Message.FLAG_LEFT) != 0 )
 			) {
-				if( c.currentTurningAngle < 0f ) {
-					c.currentTurningAngle = 0f;
-					//c.getDirection().set( c.getVelocity() );
-				}
-				if( c.currentTurningAngle < c.maxTurningAngle * c.requestedTurningAngle )
-					c.currentTurningAngle += c.turningAngleStep;
-				else
-					c.currentTurningAngle -= c.turningAngleStep;
+				if( c.currentTurningAngle <= 0 )
+					c.getDirection().set( c.getVelocity() );
+				c.currentTurningAngle = c.maxTurningAngle * c.requestedTurningAngle;
 				c.getDirection().set( c.getVelocity() );
 				c.getVelocity().rotate( c.currentTurningAngle );
 			}
@@ -96,14 +91,9 @@ public class Simulation {
 					( c.speed > 0f && (bhv & Message.FLAG_LEFT) != 0 ) ||
 					( c.speed < 0f && (bhv & Message.FLAG_RIGHT) != 0 )
 			) {
-				if( c.currentTurningAngle > 0f ) {
-					c.currentTurningAngle = 0f;
-					//c.getDirection().set( c.getVelocity() );
-				}
-				if( c.currentTurningAngle > -(c.maxTurningAngle * c.requestedTurningAngle) )
-					c.currentTurningAngle -= c.turningAngleStep;
-				else
-					c.currentTurningAngle += c.turningAngleStep;
+				if( c.currentTurningAngle >= 0 )
+					c.getDirection().set( c.getVelocity() );
+				c.currentTurningAngle = -(c.maxTurningAngle * c.requestedTurningAngle);
 				c.getDirection().set( c.getVelocity() );
 				c.getVelocity().rotate( c.currentTurningAngle );
 			}
