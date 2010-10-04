@@ -13,6 +13,7 @@ public class RacerCarMenu extends Activity implements OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.car_menu);
         
+        // Instancje buttonów
         View prevButton = findViewById(R.id.prev);
         prevButton.setOnClickListener(this);
         View car01Button = findViewById(R.id.car_01);
@@ -25,6 +26,7 @@ public class RacerCarMenu extends Activity implements OnClickListener {
         car04Button.setOnClickListener(this);        
     }
 	
+	/** Przesy³a informacjê do RacerTrackMenu o wybranym samochodzie */
 	public void onClick(View v) {
 		Intent i;
 		
@@ -34,18 +36,22 @@ public class RacerCarMenu extends Activity implements OnClickListener {
 			break;
     	case R.id.car_01:
     		i = new Intent(this, RacerTrackMenu.class);
+    		i.putExtra("_car", getResources().getInteger(v.getId()));
     		startActivity(i);
     		break;
     	case R.id.car_02:
     		i = new Intent(this, RacerTrackMenu.class);
+    		i.putExtra("_car", getResources().getInteger(v.getId()));
     		startActivity(i);
     		break;
 		case R.id.car_03:
 			i = new Intent(this, RacerTrackMenu.class);
+    		i.putExtra("_car", getResources().getInteger(v.getId()));
 			startActivity(i);
 			break;
 		case R.id.car_04:
 			i = new Intent(this, RacerTrackMenu.class);
+    		i.putExtra("_car", getResources().getInteger(v.getId()));
 			startActivity(i);
 			break;
 		}

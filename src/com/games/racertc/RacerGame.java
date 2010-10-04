@@ -7,6 +7,7 @@ import com.games.racertc.ui.JoystickSingleTouchUI;
 import com.games.racertc.ui.UIManager;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,6 +25,12 @@ public class RacerGame extends Activity implements Callback, GameStateChangeList
 	
 	/** View rozgrywki. */
 	private RacerGameView racerView;
+	
+	/** ID wybranego samochodu */
+	private int carId;
+	
+	/** ID wybranej trasy */
+	private int trackId;
 	
 /*--------------------------------------*/
 /*-            Obsluga menu:           -*/
@@ -87,10 +94,7 @@ public class RacerGame extends Activity implements Callback, GameStateChangeList
 		//wyrzuca zbedne rzeczy z ekranu:
 		requestWindowFeature( Window.FEATURE_NO_TITLE );
 		
-		/////////////////////////////////
-		//setContentView(R.layout.main);
 		setContentView(R.layout.game);
-		/////////////////////////////////
 		
 		//tworzy View aplikacji:
 		racerView = (RacerGameView) findViewById( R.id.racergameview );
@@ -109,8 +113,13 @@ public class RacerGame extends Activity implements Callback, GameStateChangeList
 		StateMachine.getInstance().setGameState( GameState.INTRO );
 		gameState = GameState.INTRO;
 		
+		// Pobiera informacje o wybranym samochodzie i trasie
+		Intent i = getIntent();
+		carId = i.getIntExtra("_car", 0);
+		trackId = i.getIntExtra("_track", 0);
+		
 		//-uruchamianie rozgrywki "na chama" :P-//
-		racerThread.setupGame();
+		racerThread.setupGame(carId, trackId);
 		gameState = GameState.GAME_ACTIVE;
 		//--------------------------------------//
 		

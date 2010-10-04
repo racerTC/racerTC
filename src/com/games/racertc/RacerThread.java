@@ -102,20 +102,59 @@ public class RacerThread extends Thread implements GameStateChangeListener {
 	 * paska postepu ladowania; albo wplecienie takiego rysujacego kodu w samo setupGame, co moze byc
 	 * prostrze wrealizacji.
 	 */
-	public void setupGame(/* GameSettings gs */) {
+	public void setupGame(int carId, int trackId) {
 		//////////////////////////////////////
 		// Przygotowuje przykladowa gre     //
 		//////////////////////////////////////
 		//samochod:
-		Car c = new Car( 2.0f, resources.getDrawable( R.drawable.car_red ) );
+		int chosenCar;
+		
+		switch(carId) {
+		case R.id.car_01:
+			chosenCar = resources.getIdentifier("car_01", "drawable", "com.games.racertc");
+			break;
+		case R.id.car_02:
+			chosenCar = resources.getIdentifier("car_02", "drawable", "com.games.racertc");
+			break;
+		case R.id.car_03:
+			chosenCar = resources.getIdentifier("car_03", "drawable", "com.games.racertc");
+			break;
+		case R.id.car_04:
+			chosenCar = resources.getIdentifier("car_04", "drawable", "com.games.racertc");
+			break;
+		default:
+			chosenCar = resources.getIdentifier("car_01", "drawable", "com.games.racertc");
+			break;
+		}
+		
+		Car c = new Car( 2.0f, resources.getDrawable( chosenCar ));
 		c.setPosition( new Vec2D( 25f,25f ) );
 		//trasa:
+		int chosenTrack;
+		
+		switch(trackId) {
+		case R.id.track_01:
+			chosenTrack = resources.getIdentifier("track_01", "drawable", "com.games.racertc");
+			break;
+		case R.id.track_02:
+			chosenTrack = resources.getIdentifier("track_02", "drawable", "com.games.racertc");
+			break;
+		case R.id.track_03:
+			chosenTrack = resources.getIdentifier("track_03", "drawable", "com.games.racertc");
+			break;
+		case R.id.track_04:
+			chosenTrack = resources.getIdentifier("track_04", "drawable", "com.games.racertc");
+			break;
+		default:
+			chosenTrack = resources.getIdentifier("track_01", "drawable", "com.games.racertc");
+			break;
+		}
 		Track t = null;
 		Debug.MemoryInfo dbmi1 = new Debug.MemoryInfo();
 		Debug.MemoryInfo dbmi2 = new Debug.MemoryInfo();
 		Debug.getMemoryInfo( dbmi1 );
 		int bg = dbmi1.otherSharedDirty;
-		t = new Track( BitmapFactory.decodeResource(resources, R.drawable.tor) );
+		t = new Track( BitmapFactory.decodeResource(resources, chosenTrack) );
 		Debug.getMemoryInfo( dbmi2 );
 		int en = dbmi2.otherSharedDirty;
 		int imgs = en - bg;

@@ -7,12 +7,20 @@ import android.view.View;
 import android.view.View.OnClickListener;
 
 public class RacerTrackMenu extends Activity implements OnClickListener {
-
+	
+	/** Wybrany samochód */
+	private int carId;
+	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.track_menu);
         
+        // Pobiera informacjê o wybranym samochodzie
+        Intent i = getIntent();
+        carId = i.getIntExtra("_car", 0);
+        
+        // Instancje buttonów
         View prevButton = findViewById(R.id.prev);
         prevButton.setOnClickListener(this);
         View track01Button = findViewById(R.id.track_01);
@@ -25,6 +33,7 @@ public class RacerTrackMenu extends Activity implements OnClickListener {
         track04Button.setOnClickListener(this);        
     }
 	
+	/** Przesy³a informacjê do RacerGame o wybranym samochodzie i trasie */
 	public void onClick(View v) {
 		Intent i;
 		
@@ -34,18 +43,26 @@ public class RacerTrackMenu extends Activity implements OnClickListener {
 			break;
     	case R.id.track_01:
     		i = new Intent(this, RacerGame.class);
+    		i.putExtra("_car", carId);
+    		i.putExtra("_track", getResources().getInteger(v.getId()));
     		startActivity(i);
     		break;
     	case R.id.track_02:
     		i = new Intent(this, RacerGame.class);
+    		i.putExtra("_car", carId);
+    		i.putExtra("_track", getResources().getInteger(v.getId()));
     		startActivity(i);
     		break;
     	case R.id.track_03:
     		i = new Intent(this, RacerGame.class);
+    		i.putExtra("_car", carId);
+    		i.putExtra("_track", getResources().getInteger(v.getId()));
     		startActivity(i);
     		break;
     	case R.id.track_04:
     		i = new Intent(this, RacerGame.class);
+    		i.putExtra("_car", carId);
+    		i.putExtra("_track", getResources().getInteger(v.getId()));
     		startActivity(i);
     		break;
     	}
