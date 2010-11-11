@@ -111,13 +111,16 @@ public Bitmap getTrackGraphics() {
 	}
 
 	/**
-	 * Zwraca opor trasy w danym punkcie. Opor trasy bedzie odejmowany od
-	 * przyspieszenia samochodu, o ile porusza sie on ruchem przyspieszonym.
-	 * @param position
-	 * @return
+	 * Pozwala sprawdzic sile tarcia w danym punkcie na mapie. Uwzgledniana takze opor powietrza dzialajacy na pojazd.
+	 * @param objectsDrivingForce Sila dzialajaca na samochod, dla ktorego sprawdzana jest sila tarcia.
+	 * @param coords Wspolrzedne punktu na mapie, dla ktorego sprawdzana jest sila tarcia.
+	 * @return Wartosc sily tarcia w zadanym punkcie, w N. Zawsze zwracana jest wartosc nieujemna (chyba, ze powierzchnia odpycha
+	 * pojazd zamiast zatrzymywac :P), tj. nie jest uwzgledniany zwrot sily.
 	 */
-	public float getDecceleration( Vec2D position ) {
-		return 0.0008f;
+	public float getFrictionForce( Car c, Vec2D coords ) {
+		return
+			1500f +												//tarcie
+			(0.34f * c.velocityMagnitude * c.velocityMagnitude);//opor powietrza
 	}
 	
 	

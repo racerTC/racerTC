@@ -51,6 +51,17 @@ public class Vec2D {
 	}
 
 	/**
+	 * Tworzy nowy wektor obrocony o zadany kat wzgledem obecnego wektora.
+	 * @param a Kat obrotu nowego wektora.
+	 * @return Nowy wektor obrocony o zadany kat wzgledem macierzystego wektora.
+	 */
+	public Vec2D instantiateRotatedVector( float a ) {
+		Vec2D v = new Vec2D( x, y );
+		v.rotate( a );
+		return v;
+	}
+	
+	/**
 	 * Obraca aktualny wektor o kat a.
 	 * @param a Kat obrotu wektora (w radianach).
 	 */

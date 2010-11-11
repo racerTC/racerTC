@@ -22,35 +22,75 @@ public class Car extends GameObject {
 	}	
 	
 /*-----------------------------------------*/
+/*-             Stan pojazdu:             -*/
+/*-----------------------------------------*/		
+	
+
+	
+/*-----------------------------------------*/
 /*-          Parametry jazdy:             -*/
 /*-----------------------------------------*/		
 	
 	/**
+	 * Wektor jednostkowy predkosci pojazdu. Gdy nie ma poslizgu, okresla rowniez przod pojazdu.
+	 */
+	public Vec2D velocity = new Vec2D( 0f );
+	
+	/**
+	 * Dlugosc wektora predkosci.
+	 */
+	public float velocityMagnitude = 0f;
+	
+	public final float maxVelocity = 1f;
+	
+	public final float maxReversedVelocity = - 0.2f * maxVelocity;
+	
+	/**
+	 * Okresla mase pojazdu w kg.
+	 */
+	public final float mass = 1280f;
+	
+	/**
+	 * Okresla maksymalna sile napedzajaca pojazd w N
+	 */
+	public final float maxDrivingForce = 25000f;
+	
+	/**
+	 * Wykorzystanie sily napedzajacej (lub hamujacej) pojazd, w zakresie [0..1]
+	 */
+	public float requestedDrivingForce = 0f;
+	
+	/**
+	 * 
+	 */
+	public final float maxBrakingForce = 50000f;
+	
+	/**
 	 * Jednostkowy wektor okreslajacy zwrot i kierunek wektora predkosci.
 	 */
-	protected Vec2D velocity = new Vec2D( 0f );
+	//protected Vec2D velocity = new Vec2D( 0f );
 	
 	/**
 	 * Jednostkowy wektor okreslajacy gdzie znajduje sie przod samochodu.
 	 */
-	protected Vec2D direction = new Vec2D( 0f );
+	//protected Vec2D direction = new Vec2D( 0f );
 	
-	/** Obecna szybkosd samochodu. */
-	public float speed = 0f;
+	/** Obecna szybkosc samochodu. */
+	//public float speed = 0f;
 	
 	/** Maksyma szybkosc samochodu. */
-	public float maxSpeed = 1f;
+	//public float maxSpeed = 1f;
 	
-	public float requestedSpeed = 0f;
+	//public float requestedSpeed = 0f;
 	
-	/** Maksymalny kat skretu samochodu. */
-	public float maxTurningAngle = (float) Math.toRadians( 6f );
+	/** Maksymalny kat skretu samochodu - w radianach na sekunde. */
+	public float maxTurningAngle = (float) Math.toRadians( 120f );
 	
 	/** Ile stopni w kazdej klatce samochod bedzie skrecal bardziej niz w poprzedniej. */
-	public float turningAngleStep = (float) Math.toRadians( 0.4f );
+	//public float turningAngleStep = (float) Math.toRadians( 0.4f );
 	
 	/** Obecny kat skretu samochodu. */
-	public float currentTurningAngle = 0f;
+	//public float currentTurningAngle = 0f;
 	
 	public float requestedTurningAngle = 0f;
 	
@@ -68,10 +108,6 @@ public class Car extends GameObject {
 	/** Przyspieszenie hamulca recznego. */
 	public float accelerationHandbreak = -0.005f;
 	
-	public Vec2D getVelocity() { return velocity; };
-	
-	public Vec2D getDirection() { return direction; };
-	
 	/**
 	 * Flagi okreslajace aktualne zachowanie samochodu.
 	 */
@@ -80,7 +116,7 @@ public class Car extends GameObject {
 	public void updateBehaviour( Message m ) {
 		behaviourFlags &= m.getMask(); //usuwa stare flagi
 		behaviourFlags |= m.getFlags(); //aplikuje nowe flagi
-		this.requestedSpeed = m.yAxisUsage;
+		this.requestedDrivingForce = m.yAxisUsage;
 		this.requestedTurningAngle = m.xAxisUsage;
 	}
 	
@@ -89,7 +125,7 @@ public class Car extends GameObject {
 	}
 	
 	public float getRotation() {
-		return direction.getAngle();
+		return velocity.getAngleForUnitVector();
 	}
 	
 }

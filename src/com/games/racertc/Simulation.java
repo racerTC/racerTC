@@ -53,72 +53,108 @@ public class Simulation {
 	}
 	
 	private void simulate( Car c, long dt ) {
-		//Najpierw sprawdz, jakie jest sterowanie samochodu
+		/* Sterowanie samochodu */
 		int bhv = c.getBehaviourFlags();
 		
+		/* Wartosc przyspieszenia dzialajacego na samochod: */
 		float acceleration = 0f;
 		
-		if( (bhv & Message.FLAG_UP) != 0 ) {
-			if( c.speed < c.maxSpeed * c.requestedSpeed )
-				acceleration += c.acceleration;
-			else {
-				int j = 50;
-			}
-		}
+		/* Od tej pory obliczamy parametry fizyczne niezalezne od czasu: */
+		
+		float friction_force = track.getFrictionForce( c, c.getPosition() );
+		
+		if( (bhv & ( Message.FLAG_UP | bhv & Message.FLAG_DOWN )) != 0 ) {
 			
-		if( (bhv & Message.FLAG_DOWN) != 0 ) {
-			//TODO: rozroznienie hamulce/wsteczny
-			if( c.speed > -( c.maxSpeed * c.requestedSpeed ) )
-				acceleration -= c.acceleration;
+			if( (bhv & Message.FLAG_UP) != 0 ) {
+				
+				if( c.velocityMagnitude >= 0f ) {
+					//jedziemy do przodu i przyspieszamy
+					float driving_force = (c.requestedDrivingForce * c.maxDrivingForce);
+					float force = driving_force - friction_force;			
+					if( force > 0f )
+						acceleration = force / c.mass;
+				} else {
+					//jedziemy do tylu i hamujemy
+					float braking_force = (c.requestedDrivingForce * c.maxBrakingForce);
+					float force = braking_force + friction_force;
+					acceleration = force / c.mass;					
+				}
+			}
+				
+			if( (bhv & Message.FLAG_DOWN) != 0 ) {
+				
+				if( c.velocityMagnitude <= 0f ) {
+					//jedziemy do tylu i przyspieszamy
+					float driving_force = (c.requestedDrivingForce * c.maxDrivingForce);
+					float force = - driving_force + friction_force;
+					//teraz dziala jak wsteczny:
+					if( force < 0f )
+						acceleration = force / c.mass;
+				} else {
+					//jedziemy do przodu i hamujemy
+					float braking_force = (c.requestedDrivingForce * c.maxBrakingForce);
+					float force = - braking_force + friction_force;
+					acceleration = force / c.mass;	
+				}
+			}
+		} else { /* Koniec obliczania przyspieszenia w ruchu w przod/tyl; teraz ssprawdzamy opor gdy nie ma przyspieszen: */
+			if( c.velocityMagnitude > 0f )
+				acceleration = -friction_force / c.mass;
+			else if( c.velocityMagnitude < 0f )
+				acceleration = friction_force / c.mass;
 		}
+		
+		/* Uwzgledniamy obliczone parametry w kontekscie zmiany czasu od ostatniej klatki: */
+		
+		/* Czas, ktory uplynal od poprzedniego kroku symulacji w sekundach. */
+		float dtf = 0.001f * (float) dt;
 
 		if( (bhv & (Message.FLAG_RIGHT | Message.FLAG_LEFT) ) == 0 ) {
-			c.getDirection().set( c.getVelocity() );
+			//nie ma skrecania - po prostu zwiekszamy predkosc:
+			//TODO: jakis odpalacz poslizgu bazowany na acc
 		} else {
-		
-			if(
-					( c.speed > 0f && (bhv & Message.FLAG_RIGHT) != 0 ) ||
-					( c.speed < 0f && (bhv & Message.FLAG_LEFT) != 0 )
-			) {
-				c.currentTurningAngle = c.maxTurningAngle * c.requestedTurningAngle;
-				c.getDirection().set( c.getVelocity() );
-				c.getVelocity().rotate( c.currentTurningAngle );
-			}
+			Vec2D vn = null;
 			
 			if(
-					( c.speed > 0f && (bhv & Message.FLAG_LEFT) != 0 ) ||
-					( c.speed < 0f && (bhv & Message.FLAG_RIGHT) != 0 )
+					( c.velocityMagnitude > 0f && (bhv & Message.FLAG_RIGHT) != 0 ) ||
+					( c.velocityMagnitude < 0f && (bhv & Message.FLAG_LEFT) != 0 )
 			) {
-				c.currentTurningAngle = -(c.maxTurningAngle * c.requestedTurningAngle);
-				c.getDirection().set( c.getVelocity() );
-				c.getVelocity().rotate( c.currentTurningAngle );
-			}
+				vn = c.velocity.instantiateRotatedVector( c.requestedTurningAngle * c.maxTurningAngle * dtf );
+			} else if(
+					( c.velocityMagnitude > 0f && (bhv & Message.FLAG_LEFT) != 0 ) ||
+					( c.velocityMagnitude < 0f && (bhv & Message.FLAG_RIGHT) != 0 )
+			) {
+				vn = c.velocity.instantiateRotatedVector( - c.requestedTurningAngle * c.maxTurningAngle * dtf );
+			} 
+			
+			//TODO: jakis odpalacz poslizgu bazowany na acc?
+			
+			if( vn != null ) {
+				c.velocity = vn;
+			}			
+		} /* Koniec obslugi skrecania */
+
+		//gdy mamy przyczepnosc:		
 		
+		float sign = Math.signum( c.velocityMagnitude );
+		c.velocityMagnitude += acceleration * dtf * dtf * 0.5f;
+		float sign2 = Math.signum( c.velocityMagnitude );
+		//zabezpieczenie przed sytuacja, kiedy hamowanie powoduje natychmiastowe
+		//rozpoczecie jazdy na wstecznym - lub odwrotnie:
+		if( (sign != sign2) && (sign != 0f) ) {
+			//nastapila zmiana przyspieszenie <-> hamulec
+			c.velocityMagnitude = 0f;
 		}
 		
-		//tarcie powierzchni:
-		if( c.speed > 0 )
-			acceleration -= track.getDecceleration( c.getPosition() );
-		else if( c.speed < 0 )
-			acceleration += track.getDecceleration( c.getPosition() );
-		
-		//dokonuje przyspieszen:
-		float speed_sign = Math.signum( c.speed );
-		c.speed += acceleration * (float) dt;
-		if( speed_sign == -Math.signum(c.speed) )
-			c.speed = 0;
-		//obsoletowe:
-		//if( c.speed > c.maxSpeed )
-		//	c.speed = c.maxSpeed;
-		//if( c.speed < -c.maxSpeed )
-		//	c.speed = -c.maxSpeed;
-		
-		//gdy mamy przyczepnosc:
+		if( c.velocityMagnitude > c.maxVelocity )
+			c.velocityMagnitude = c.maxVelocity;
+		else if( c.velocityMagnitude < c.maxReversedVelocity )
+			c.velocityMagnitude = c.maxReversedVelocity;
 		
 		//zmienia pozycje samochodu:
 		c.getPosition().add(
-				c.getVelocity().getX() * c.speed,
-				c.getVelocity().getY() * c.speed
+				c.velocity.getX() * c.velocityMagnitude,
+				c.velocity.getY() * c.velocityMagnitude
 		);
 		
 		//gdy nie mamy przyczepnosci:
