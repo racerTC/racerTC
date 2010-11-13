@@ -4,7 +4,7 @@
       android:versionCode="1"
       android:versionName="1.0">
     <application android:icon="@drawable/icon" android:label="@string/app_name">
-        <activity android:name=".RacerMenu"
+        <activity android:name=".RacerGame"
                   android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -14,7 +14,7 @@
         
         <activity android:name=".RacerCarMenu" />
         <activity android:name=".RacerTrackMenu" />
-        <activity android:name=".RacerGame" />
+        <activity android:name=".RacerMenu" />
 
     </application>
     <uses-sdk android:minSdkVersion="3" />

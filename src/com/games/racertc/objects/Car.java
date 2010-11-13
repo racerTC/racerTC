@@ -53,35 +53,23 @@ public class Car extends GameObject {
 	/**
 	 * Okresla maksymalna sile napedzajaca pojazd w N
 	 */
-	public final float maxDrivingForce = 25000f;
+	public final float maxDrivingForce = 15000f;
+	
+	/** Maksyma szybkosc samochodu. */
+	public final float maxSpeed = 1f;	
+	
+	/** Maksyma szybkosc samochodu. */
+	public final float maxReversedSpeed = - 0.3f * maxSpeed;		
 	
 	/**
-	 * Wykorzystanie sily napedzajacej (lub hamujacej) pojazd, w zakresie [0..1]
+	 * Zadana predkosc pojazdu wzgledem predkosci maksymalnej, w zakresie [0..1]
 	 */
-	public float requestedDrivingForce = 0f;
+	public float requestedSpeed = 0f;
 	
 	/**
 	 * 
 	 */
 	public final float maxBrakingForce = 50000f;
-	
-	/**
-	 * Jednostkowy wektor okreslajacy zwrot i kierunek wektora predkosci.
-	 */
-	//protected Vec2D velocity = new Vec2D( 0f );
-	
-	/**
-	 * Jednostkowy wektor okreslajacy gdzie znajduje sie przod samochodu.
-	 */
-	//protected Vec2D direction = new Vec2D( 0f );
-	
-	/** Obecna szybkosc samochodu. */
-	//public float speed = 0f;
-	
-	/** Maksyma szybkosc samochodu. */
-	//public float maxSpeed = 1f;
-	
-	//public float requestedSpeed = 0f;
 	
 	/** Maksymalny kat skretu samochodu - w radianach na sekunde. */
 	public float maxTurningAngle = (float) Math.toRadians( 120f );
@@ -95,18 +83,11 @@ public class Car extends GameObject {
 	public float requestedTurningAngle = 0f;
 	
 	/** Przyczepnosc. */
-	public float adhesion = 1f;
+	//public float adhesion = 1f;
 	
-	public float adhesionSide = 1f;
+	//public float adhesionSide = 1f;
 	
-	/** Przyspieszenie samochodu. */
-	public float acceleration = 0.0018f;
-	
-	/** Przyspieszenie hamulcow */
-	public float accelerationBreaks = -0.0025f;
-	
-	/** Przyspieszenie hamulca recznego. */
-	public float accelerationHandbreak = -0.005f;
+
 	
 	/**
 	 * Flagi okreslajace aktualne zachowanie samochodu.
@@ -116,7 +97,7 @@ public class Car extends GameObject {
 	public void updateBehaviour( Message m ) {
 		behaviourFlags &= m.getMask(); //usuwa stare flagi
 		behaviourFlags |= m.getFlags(); //aplikuje nowe flagi
-		this.requestedDrivingForce = m.yAxisUsage;
+		this.requestedSpeed = m.yAxisUsage;
 		this.requestedTurningAngle = m.xAxisUsage;
 	}
 	

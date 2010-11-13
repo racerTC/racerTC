@@ -17,11 +17,11 @@ public class MessageFactory {
 	
 	/**
 	 * Tworzy wiadomosc sterujaca ruchem pojazdu gracza w przod.
-	 * @param owner
+	 * @param owner 
+	 * @param flags Znaczniki definiujace podtyp wiadomisci. W zaleznosci od znacznikow
+	 * okreslana jest koniecznosc zakonczenia lub rozpoczecia ruchu.
 	 * @param xAxisUsage 
-	 * @param yAxisUsage 
-	 * @param flag flaga definiujaca podtyp wiadomisci. W zaleznosci od flagi
-	 * okresla koniecznosc zakocnzenia lub rozpoczecia ruchu.
+	 * @param yAxisUsage
 	 * @return Zamowiona wiadomosci.
 	 */
 	public Message createMovementMessage( int owner, int flags, float xAxisUsage, float yAxisUsage ) {

@@ -54,7 +54,7 @@ public class JoystickSingleTouchUI extends UIManager {
 	private boolean allow_input = false;
 	
 	@Override
-	public boolean onTouch(View v, MotionEvent event) {
+	public boolean onTouch( View v, MotionEvent event ) {
 		float x = event.getX();
 		float y = event.getY();
 		
@@ -143,7 +143,7 @@ public class JoystickSingleTouchUI extends UIManager {
 
 	@Override
 	public void drawUI(Canvas canvas) { //113
-		float gpx = width - treshold - 57 - 5f;
+		float gpx = width - treshold - 57f - 5f;
 		float gpy = height - treshold - 57f - 5f;
 		synchronized( this ) {
 			gpx += xoffset;

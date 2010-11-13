@@ -62,22 +62,24 @@ public class Simulation {
 		/* Od tej pory obliczamy parametry fizyczne niezalezne od czasu: */
 		
 		float friction_force = track.getFrictionForce( c, c.getPosition() );
-		
+	
 		if( (bhv & ( Message.FLAG_UP | bhv & Message.FLAG_DOWN )) != 0 ) {
 			
 			if( (bhv & Message.FLAG_UP) != 0 ) {
 				
 				if( c.velocityMagnitude >= 0f ) {
 					//jedziemy do przodu i przyspieszamy
-					float driving_force = (c.requestedDrivingForce * c.maxDrivingForce);
-					float force = driving_force - friction_force;			
-					if( force > 0f )
-						acceleration = force / c.mass;
+					if( c.velocityMagnitude < ( c.requestedSpeed * c.maxSpeed) ) {
+						float driving_force = c.maxDrivingForce;
+						float force = driving_force - friction_force;			
+						if( force > 0f )
+							acceleration = force / c.mass;
+					} else acceleration = 0f;
 				} else {
 					//jedziemy do tylu i hamujemy
-					float braking_force = (c.requestedDrivingForce * c.maxBrakingForce);
+					float braking_force = (c.requestedSpeed * c.maxBrakingForce);
 					float force = braking_force + friction_force;
-					acceleration = force / c.mass;					
+					acceleration = force / c.mass;
 				}
 			}
 				
@@ -85,14 +87,16 @@ public class Simulation {
 				
 				if( c.velocityMagnitude <= 0f ) {
 					//jedziemy do tylu i przyspieszamy
-					float driving_force = (c.requestedDrivingForce * c.maxDrivingForce);
-					float force = - driving_force + friction_force;
-					//teraz dziala jak wsteczny:
-					if( force < 0f )
-						acceleration = force / c.mass;
+					if( c.velocityMagnitude > ( c.requestedSpeed * c.maxReversedSpeed) ) {
+						float driving_force = c.maxDrivingForce;
+						float force = - driving_force + friction_force;
+						//teraz dziala jak wsteczny:
+						if( force < 0f )
+							acceleration = force / c.mass;
+					} else acceleration = 0f;
 				} else {
 					//jedziemy do przodu i hamujemy
-					float braking_force = (c.requestedDrivingForce * c.maxBrakingForce);
+					float braking_force = (c.requestedSpeed * c.maxBrakingForce);
 					float force = - braking_force + friction_force;
 					acceleration = force / c.mass;	
 				}

@@ -74,4 +74,23 @@ public abstract class UIManager implements OnTouchListener, GameStateChangeListe
 		this.gameState = gameState;
 	}		
 	
+/*-----------------------------------------*/
+/*-         Funkcje pomocnicze:           -*/
+/*-----------------------------------------*/	
+	
+	/**
+	 * Sprawdza, czy zadana wartosc miesci sie w podanym przedziale. Sprawdzane
+	 * sa nierownosci slabe.
+	 * @param val Testowana wartosc.
+	 * @param min Dolna granica przedzialu.
+	 * @param max Gorna granica przedzialu.
+	 * @return Zwraca <strong>true</strong> jezeli wartosc miesci sie w przedziale
+	 * [min,max], albo <strong>false</strong> w przeciwnym przypadku.
+	 */
+	public static boolean isInRange( float val, float min, float max ) {
+		if( (val >= min) && (val <= max) )
+			return true;
+		else return false;
+	}
+	
 }

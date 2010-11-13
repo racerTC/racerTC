@@ -67,9 +67,11 @@ public final class R {
         public static final int ui_joystick_idle=0x7f020035;
         public static final int ui_joystick_rev=0x7f020036;
         public static final int ui_left=0x7f020037;
-        public static final int ui_point_selection=0x7f020038;
-        public static final int ui_right=0x7f020039;
-        public static final int ui_up=0x7f02003a;
+        public static final int ui_left_right=0x7f020038;
+        public static final int ui_point_selection=0x7f020039;
+        public static final int ui_right=0x7f02003a;
+        public static final int ui_up=0x7f02003b;
+        public static final int ui_up_down=0x7f02003c;
     }
     public static final class id {
         public static final int car_01=0x7f050001;
