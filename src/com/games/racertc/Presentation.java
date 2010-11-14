@@ -67,6 +67,10 @@ public class Presentation {
 		this.uiManager = uiManager;
 	}
 	
+	public UIManager getUIManager() {
+		return uiManager;
+	}
+	
 	public void setResolution( int width, int height ) {
 		this.width = width;
 		this.height = height;

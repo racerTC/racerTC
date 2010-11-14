@@ -1,6 +1,7 @@
 package com.games.racertc.ui;
 
 import com.games.racertc.R;
+import com.games.racertc.RacerThread;
 import com.games.racertc.messages.Message;
 import com.games.racertc.objects.Car;
 
@@ -8,6 +9,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.os.SystemClock;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -78,6 +80,8 @@ public class TwoSlidersSingleTouchUI extends UIManager {
 /*-           Obsluga wejscia:            -*/
 /*-----------------------------------------*/		
 	
+	private static final long HANDLING_INTERVAL = 50;
+	
 	@Override
 	public boolean onTouch( View v, MotionEvent event ) {
 
@@ -139,14 +143,7 @@ public class TwoSlidersSingleTouchUI extends UIManager {
 			}
 			/* Jesli trzeba wysyla stosowna wiadomosc: */
 			if( send_msg ) {
-				messageQueue.push(
-						messageFactory.createMovementMessage(
-								Car.CAR_PLAYER,
-								flags,
-								sideUsage,
-								fwdUsage
-						)
-				);
+				sendMessage( flags, sideUsage, fwdUsage );
 				storedUD = fwdUsage;
 			}
 			break;
@@ -156,11 +153,11 @@ public class TwoSlidersSingleTouchUI extends UIManager {
 		case MotionEvent.ACTION_OUTSIDE:
 			flags = storedUDFlag;
 			lrGalkaX = lrCenterX;
-			messageQueue.push(
-					messageFactory.createMovementMessage( Car.CAR_PLAYER, flags, 0f, storedUD )
-			);
+			sendMessage( flags, 0f, storedUD );
 			break;
 		}
+		
+		SystemClock.sleep( HANDLING_INTERVAL );
 		
 		return true;
 	}
@@ -176,6 +173,8 @@ public class TwoSlidersSingleTouchUI extends UIManager {
 		canvas.drawBitmap( upDown, udPosX, udPosY, null );
 		canvas.drawBitmap( galka, lrGalkaX - 4.5f, lrCenterY - 6.5f, null );
 		canvas.drawBitmap( galka, udCenterX - 4.5f, udGalkaY - 5f, null );
+		if( RacerThread.MEASURE_FPS )
+			super.drawUI( canvas );
 	}
 
 }

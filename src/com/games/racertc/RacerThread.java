@@ -21,6 +21,8 @@ import android.view.SurfaceHolder;
  */
 public class RacerThread extends Thread implements GameStateChangeListener {
 	
+	public final static boolean MEASURE_FPS = true;
+	
 	/**
 	 * Docelowy czas trwania pojedynczej klatki w milisekundach. Obecne
 	 * ustawienie to 33 ms, co daje okolo 30 fps.
@@ -181,7 +183,8 @@ public class RacerThread extends Thread implements GameStateChangeListener {
 		
 		long previous_time = SystemClock.uptimeMillis();
 		//do mierzenia sredniej ilosci fpsow:
-		//long ttm = 0, fct = 0;
+		int last_known_fps = 0;
+		int accumulated_time = 0, frame_count = 0;
 		
 		while( run ) {
 			
@@ -190,9 +193,16 @@ public class RacerThread extends Thread implements GameStateChangeListener {
 			previous_time = current_time;
 			
 			//Obliczanie FPS'ow:
-			//ttm += time_quantum;
-			//fct += 1;
-			//float fps_avg = fct / ttm;
+			if( MEASURE_FPS ) {
+				accumulated_time += time_quantum;
+				frame_count++;
+				if( accumulated_time >= 500 ) {
+					UIManager uiman = presentation.getUIManager();
+					if( uiman != null )
+						uiman.setFPS( (long) ((frame_count / (accumulated_time * 0.001f))) );
+					frame_count	= accumulated_time = 0;
+				}
+			}
 			
 			switch( gameState ) {
 			

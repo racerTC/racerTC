@@ -3,9 +3,12 @@ package com.games.racertc.ui;
 import com.games.racertc.MessageQueue;
 import com.games.racertc.gamestate.GameStateChangeListener;
 import com.games.racertc.gamestate.StateMachine;
+import com.games.racertc.messages.Message;
 import com.games.racertc.messages.MessageFactory;
+import com.games.racertc.objects.Car;
 
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.view.View.OnTouchListener;
 
 /**
@@ -17,6 +20,13 @@ import android.view.View.OnTouchListener;
  */
 public abstract class UIManager implements OnTouchListener, GameStateChangeListener {
 
+	
+	protected float
+		lastYUsage = 0f,
+		lastXUsage = 0f;
+		
+	protected int lastFlags = Message.FLAG_NONE;
+	
 	/** Przechowuje referencje do MessageQueue. */ 
 	protected MessageQueue messageQueue;
 	
@@ -59,7 +69,9 @@ public abstract class UIManager implements OnTouchListener, GameStateChangeListe
 	 * Rysuje UI.
 	 * @param canvas Canvas na ktorym narysowany zostanie interface uzytkownika.
 	 */
-	public abstract void drawUI( Canvas canvas );
+	public void drawUI( Canvas canvas ) {
+		canvas.drawText( "FPS: " + fps, width - 50f, 20f, new Paint() );
+	}
 	
 	//TODO: wszystkie elementy UI wskakuja tutaj.
 	
@@ -91,6 +103,43 @@ public abstract class UIManager implements OnTouchListener, GameStateChangeListe
 		if( (val >= min) && (val <= max) )
 			return true;
 		else return false;
+	}
+
+	/**
+	 * Wysyla do glownego watku gry wiadomosc zawierajaca zadane sterowanie. Metoda dba o to, aby
+	 * nie wysylac kilkakrotnie wiadomosci powielajacych wiadomosci wyslane uprzednio.
+	 * @param flags
+	 * @param sideUsage
+	 * @param fwdUsage
+	 */
+	public void sendMessage( int flags, float sideUsage, float fwdUsage ) {
+		/* Zaokraglanie liczb: */
+		sideUsage = (float) Math.round( sideUsage * 100f ) * 0.01f;
+		fwdUsage = (float) Math.round( fwdUsage * 100f ) * 0.01f;
+		/* Jezeli trzeba, wysyla wiadomosc. */
+		if( !(flags == lastFlags && lastXUsage == sideUsage && lastYUsage == fwdUsage) ) {
+			lastFlags = flags;
+			lastXUsage = sideUsage;
+			lastYUsage = fwdUsage;
+			messageQueue.push(
+					messageFactory.createMovementMessage(
+							Car.CAR_PLAYER,
+							flags,
+							sideUsage,
+							fwdUsage
+					)
+			);
+		}
+	}
+	
+/*-----------------------------------------*/
+/*-           Pomiar FPS'ow:              -*/
+/*-----------------------------------------*/		
+	
+	long fps;
+	
+	public void setFPS( long fps ) {
+		this.fps = fps;
 	}
 	
 }

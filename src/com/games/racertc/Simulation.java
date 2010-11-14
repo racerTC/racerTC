@@ -39,11 +39,15 @@ public class Simulation {
 		this.track = track;
 	}	
 	
+	int maxQlen = 0;
+	
 	/**
 	 * Odbiera wiadomosci sterowania pojazdami
 	 */
 	private void receiveInputMessages() {
 		Message m;
+		if( messageQueue.size() > maxQlen )
+			maxQlen = messageQueue.size();
 		while( (m = messageQueue.pop()) != null ) {
 			//interpretuje wiadomosc i steruje odpowiednio samochodem gracza/kogos innego
 			Car c = track.getCar( m.getOwner() );
@@ -157,8 +161,8 @@ public class Simulation {
 		
 		//zmienia pozycje samochodu:
 		c.getPosition().add(
-				c.velocity.getX() * c.velocityMagnitude,
-				c.velocity.getY() * c.velocityMagnitude
+				c.velocity.getX() * c.velocityMagnitude * dtf * 40f,
+				c.velocity.getY() * c.velocityMagnitude * dtf * 40f
 		);
 		
 		//gdy nie mamy przyczepnosci:

@@ -10,6 +10,10 @@ import com.games.racertc.messages.Message;
  */
 public class MessageQueue {
 
+	public int size() {
+		return messageQueue.size();
+	}
+	
 /*-----------------------------------------*/
 /*-       Implementacja singletonu:       -*/
 /*-----------------------------------------*/		

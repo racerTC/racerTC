@@ -119,7 +119,7 @@ public Bitmap getTrackGraphics() {
 	 */
 	public float getFrictionForce( Car c, Vec2D coords ) {
 		return
-			1500f +												//tarcie
+			5000f +												//tarcie
 			(0.34f * c.velocityMagnitude * c.velocityMagnitude);//opor powietrza
 	}
 	

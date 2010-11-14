@@ -36,7 +36,7 @@ public class Message {
 	 */
 	public Message() {
 		setOwner( 0 );
-		setFlags( 0, 0f, 0f );
+		setFlags( 0, 0, 0f, 0f );
 	}
 	
 	/**
@@ -46,8 +46,7 @@ public class Message {
 	 * @param xAxisUsage 
 	 */
 	public Message( int owner, int flags, float xAxisUsage, float yAxisUsage ) {
-		setOwner( owner );
-		setFlags( flags, xAxisUsage, yAxisUsage );
+		setFlags( owner, flags, xAxisUsage, yAxisUsage );
 	}
 	
 	/**
@@ -66,7 +65,8 @@ public class Message {
 		return owner;
 	}
 	
-	public void setFlags( int flags, float xAxisUsage, float yAxisUsage ) {
+	public void setFlags( int owner, int flags, float xAxisUsage, float yAxisUsage ) {
+		this.owner = owner;
 		this.flags = flags;
 		this.xAxisUsage = xAxisUsage;
 		this.yAxisUsage = yAxisUsage;
