@@ -29,6 +29,8 @@ public class Presentation {
 	
 	protected UIManager uiManager;
 	
+	Vec2D camPos = new Vec2D();
+	
 	/** Szerokosc ekranu. */
 	protected int width = 1024;
 	/** Wysokosc ekranu. */
@@ -91,29 +93,27 @@ public class Presentation {
 	 * @param stickToObject Obiekt do ktorego "przyczepiona" jest kamera.
 	 * @return Wspolrzedne piksela trasy nad ktorym zawieszona jest kamera.
 	 */
-	protected Vec2D getCameraPosition( GameObject stickToObject ) {
-		Vec2D pos = stickToObject.getPosition().toPx();
-		int x = (int) pos.getX();
-		int y = (int) pos.getY();
+	protected void calculateCameraPosition( GameObject stickToObject ) {
+		camPos = stickToObject.getPosition().toPx();
+		int x = (int) camPos.getX();
+		int y = (int) camPos.getY();
 		
 		//jesli kamera zbyt blisko lewej krawedzi
 		if( x < halfWidth )
-			pos.setX( (float) halfWidth );
+			camPos.setX( (float) halfWidth );
 		
 		//jesli kamera zbyt blisko prawej krawedzi
 		else if( x > track.getWidth() - halfWidth )
-			pos.setX( (float) (track.getWidth() - halfWidth) );
+			camPos.setX( (float) (track.getWidth() - halfWidth) );
 		
 		//jesli kamera zbyt blisko gornej krawedzi
 		if( y < halfHeight )
-			pos.setY( (float) halfHeight );
+			camPos.setY( (float) halfHeight );
 		
 		//jesli kamera zbyt blisko dolnej krawedzi
 		else if( y > track.getHeight() - halfHeight )
-			pos.setY( (float) (track.getHeight() - halfHeight) );
+			camPos.setY( (float) (track.getHeight() - halfHeight) );
 		
-		//zwracamy obliczone koordynaty
-		return pos;
 	}
 	
 	/**
@@ -200,18 +200,18 @@ public class Presentation {
 		GameObject obj = iter.next();
 		
 		//obliczamy nad jakim punktem mapy bedzie znajdowac sie kamera:
-		Vec2D cam_pos = getCameraPosition( obj );
+		calculateCameraPosition( obj );
 		
 		//rysujemy wycinek mapy (tlo):
-		drawTrackFragment( canvas, cam_pos );
+		drawTrackFragment( canvas, camPos );
 		
 		//rysujemy samochod gracza:
-		obj.acceptPresentation( this, canvas, getOnScreenPosition( obj, cam_pos ) );
+		obj.acceptPresentation( this, canvas, getOnScreenPosition( obj, camPos ) );
 		
 		//rysujemy pozostale obiekty:
 		while( iter.hasNext() ) {
 			obj = iter.next();
-			Vec2D screen_pos = getOnScreenPosition( obj, cam_pos );
+			Vec2D screen_pos = getOnScreenPosition( obj, camPos );
 			if( isOnScreen( obj, screen_pos ) ) //czy jest na ekranie?
 				obj.acceptPresentation( this, canvas, screen_pos ); //jezeli tak, to rysujemy
 		}

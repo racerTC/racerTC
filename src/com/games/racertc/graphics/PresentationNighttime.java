@@ -1,6 +1,12 @@
 package com.games.racertc.graphics;
 
+import java.util.Iterator;
+import java.util.ListIterator;
+
 import com.games.racertc.R;
+import com.games.racertc.objects.Car;
+import com.games.racertc.objects.GameObject;
+import com.games.racertc.other.Vec2D;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -8,19 +14,23 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.LightingColorFilter;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.view.SurfaceHolder;
 
 public class PresentationNighttime extends Presentation {
-
-	protected Bitmap canvasBuffer = null;
 	
-	/**
-	 * Canvas udajace glowne canvas przed metodami rysujacymi Presentation.
-	 */
-	protected final Canvas fakeCanvas;
+	protected final Paint multiplyPaint = new Paint();
+	
+	protected final Bitmap frontlights;
+	
+	protected Bitmap mapOfLights = null;
+	
+	protected final Canvas canvasOfLights = new Canvas();
+	
+	protected final int darknessColor = Color.rgb( 25, 25, 25 );
 	
 	/**
 	 * 
@@ -29,20 +39,42 @@ public class PresentationNighttime extends Presentation {
 	 */
 	public PresentationNighttime( SurfaceHolder surfaceHolder, Resources resources ) {
 		super(surfaceHolder, resources);
-		fakeCanvas = new Canvas();
-		lnd = BitmapFactory.decodeResource( resources, R.drawable.swiatlo_i_mrok );
+		frontlights = BitmapFactory.decodeResource(
+				resources,
+				R.drawable.car_headlights
+		);
+		multiplyPaint.setXfermode( new PorterDuffXfermode( PorterDuff.Mode.MULTIPLY ) );
 	}
-
-	@Override
-	public void setResolution( int width, int height ) {
-		super.setResolution( width, height );
-		if( canvasBuffer != null ) canvasBuffer.recycle();
-		canvasBuffer = Bitmap.createBitmap( width, height, Bitmap.Config.RGB_565 );
-		fakeCanvas.setBitmap( canvasBuffer );
-	}	
 	
-	final Bitmap lnd;
+    @Override
+    public void setResolution( int width, int height ) {
+            super.setResolution( width, height );
+            if( mapOfLights != null ) mapOfLights.recycle();
+            mapOfLights = Bitmap.createBitmap( width, height, Bitmap.Config.RGB_565 );
+            canvasOfLights.setBitmap( mapOfLights );
+    } 
 	
+	/**
+	 * Sprawdza, czy swiatla z reflektorow zadanego obiektu sa przynajmniej czesciowo widoczne
+	 * na ekranie.
+	 * @param obj Sprawdzany obiekt.
+	 * @param onScreenPosition wspolrzedne obiektu na ekranie.
+	 * @return <strong>true</strong>, jezeli swiatla obiektu jest widoczny; <strong>false</strong>
+	 * w przeciwnym wypadku.
+	 */
+	protected boolean lightsOnScreen( GameObject obj, Vec2D onScreenPosition ) {
+		final float obj_radius = 377f; //TODO: To chyba jest za malo;
+		//sprawdzenie na osi X
+		float tmp_var = onScreenPosition.getX();
+		if( ((tmp_var + obj_radius) < 0) || ((tmp_var - obj_radius) > width) )
+			return false;
+		//sprawdzenie na osi Y
+		tmp_var = onScreenPosition.getY();
+		if( ((tmp_var + obj_radius) < 0) || ((tmp_var - obj_radius) > height) )
+			return false;		
+		return true;
+	}
+    
 	/**
 	 * Rysuje rozgrywke oraz UI. Zarzadza dostepem do obiektu Canvas kontekstu
 	 * graficznego.
@@ -51,29 +83,39 @@ public class PresentationNighttime extends Presentation {
 	public void drawGame() {
 		//blokujemy canvas
 		Canvas canvas = surfaceHolder.lockCanvas();
-		if( canvasBuffer != null ) {
-			LightingColorFilter lcf;
-			//fakeCanvas.( lcf );
 			
-			//rysuje rozgrywke
-			internalDrawGame( canvas );
+		//rysuje rozgrywke
+		internalDrawGame( canvas );
+		
+		if( mapOfLights != null ) {
+		
+			//przygotowuje mape swiatel:
+			mapOfLights.eraseColor( darknessColor );
 			
-			//wklejamy mrok:
-			Paint p = new Paint();
-			p.setXfermode( new PorterDuffXfermode( PorterDuff.Mode.MULTIPLY ) );
-			canvas.drawBitmap( lnd, 0f, 0f, p );
+			Iterator< Car > iter = track.getCarIterator();
+			Car obj;
+			while( iter.hasNext() ) {
+				obj = iter.next();
+				Vec2D screen_pos = getOnScreenPosition( obj, camPos );
+				if( lightsOnScreen( obj, screen_pos ) ) {//czy swiatla sa widoczne na ekranie?
+					Matrix m = new Matrix();
+						//krok II: przesuwa swiatla na wlasciwa pozycje na ekranie
+					m.setTranslate( screen_pos.getX(), screen_pos.getY() );
+						//krok I: obraca swiatlo tak, jak obrocony jest samochod
+					m.preRotate( (float) Math.toDegrees( obj.getRotation() ) );
+						//krok I: ustawia poczatek swiatla w srodku ukladu wspolrzednych
+					m.preTranslate( -65f, -286f );
+					canvasOfLights.drawBitmap( frontlights, m, null );
+				}
+			}
 			
-			
-			//dodajemy efekt nocy
-			//applyDarkness( canvasBuffer );
-			
-			//wklejamy 'mroczny krajobraz' na wlasciwy canvas:
-			//canvas.drawBitmap( canvasBuffer, 0f, 0f, null );
-			
-			//na koniec rysuje UI:
-			uiManager.drawUI( canvas );
-		} else
-			super.internalDrawGame( canvas );
+			//rysujemy mrok i swiatla:
+			canvas.drawBitmap( mapOfLights, 0f, 0f, multiplyPaint );
+		
+		}
+		
+		//na koniec rysuje UI:
+		uiManager.drawUI( canvas );
 		
 		//wysylamy zmiany na ekran:
 		surfaceHolder.unlockCanvasAndPost( canvas );
