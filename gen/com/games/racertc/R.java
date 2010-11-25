@@ -57,21 +57,22 @@ public final class R {
         public static final int menu_single_s=0x7f02002b;
         public static final int menu_single_s_off=0x7f02002c;
         public static final int menu_single_s_on=0x7f02002d;
-        public static final int tor=0x7f02002e;
-        public static final int track_01=0x7f02002f;
-        public static final int track_02=0x7f020030;
-        public static final int track_03=0x7f020031;
-        public static final int track_04=0x7f020032;
-        public static final int ui_down=0x7f020033;
-        public static final int ui_joystick_fwd=0x7f020034;
-        public static final int ui_joystick_idle=0x7f020035;
-        public static final int ui_joystick_rev=0x7f020036;
-        public static final int ui_left=0x7f020037;
-        public static final int ui_left_right=0x7f020038;
-        public static final int ui_point_selection=0x7f020039;
-        public static final int ui_right=0x7f02003a;
-        public static final int ui_up=0x7f02003b;
-        public static final int ui_up_down=0x7f02003c;
+        public static final int swiatlo_i_mrok=0x7f02002e;
+        public static final int tor=0x7f02002f;
+        public static final int track_01=0x7f020030;
+        public static final int track_02=0x7f020031;
+        public static final int track_03=0x7f020032;
+        public static final int track_04=0x7f020033;
+        public static final int ui_down=0x7f020034;
+        public static final int ui_joystick_fwd=0x7f020035;
+        public static final int ui_joystick_idle=0x7f020036;
+        public static final int ui_joystick_rev=0x7f020037;
+        public static final int ui_left=0x7f020038;
+        public static final int ui_left_right=0x7f020039;
+        public static final int ui_point_selection=0x7f02003a;
+        public static final int ui_right=0x7f02003b;
+        public static final int ui_up=0x7f02003c;
+        public static final int ui_up_down=0x7f02003d;
     }
     public static final class id {
         public static final int car_01=0x7f050001;

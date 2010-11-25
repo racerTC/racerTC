@@ -3,6 +3,8 @@ package com.games.racertc;
 import com.games.racertc.gamestate.GameState;
 import com.games.racertc.gamestate.GameStateChangeListener;
 import com.games.racertc.gamestate.StateMachine;
+import com.games.racertc.graphics.Presentation;
+import com.games.racertc.graphics.PresentationNighttime;
 import com.games.racertc.objects.Car;
 import com.games.racertc.other.Vec2D;
 import com.games.racertc.tracks.Track;
@@ -34,7 +36,7 @@ public class RacerThread extends Thread implements GameStateChangeListener {
 	 * Jezeli tak, docelowa dlugosc klatki jest okreslana przez stala
 	 * TARGET_FRAME_DURATION.
 	 */
-	public final static boolean LIMIT_FRAMERATE = true;
+	public final static boolean LIMIT_FRAMERATE = false;
 	
 	final SurfaceHolder surfaceHolder;
 	
@@ -51,7 +53,7 @@ public class RacerThread extends Thread implements GameStateChangeListener {
 		this.context = context;
 		this.resources = resources;
 		
-		presentation = new Presentation( surfaceHolder, resources );
+		presentation = new PresentationNighttime( surfaceHolder, resources );
 		simulation = new Simulation();
 		
 		//rejestruje sie jako obserwator zmian stanu gry:
