@@ -18,7 +18,7 @@ import android.view.View.OnTouchListener;
  * takze nasluchuje zmian stanu gry i rowniez informacje o stanie gry
  * udostepnia klasom potomnym.
  */
-public abstract class UIManager implements OnTouchListener, GameStateChangeListener {
+public abstract class UIManager implements OnTouchListener {
 
 	
 	protected float
@@ -47,8 +47,6 @@ public abstract class UIManager implements OnTouchListener, GameStateChangeListe
 		//buforuje sobie MessageQueue i messageFactory
 		messageQueue = MessageQueue.getInstance();
 		messageFactory = MessageFactory.getInstance();
-		//rejestruje sie jako obserwator zmian stanu gry:
-		StateMachine.getInstance().addListener( this );	
 	}
 
 	/**
@@ -73,18 +71,7 @@ public abstract class UIManager implements OnTouchListener, GameStateChangeListe
 		canvas.drawText( "FPS: " + fps, width - 50f, 20f, new Paint() );
 	}
 	
-	//TODO: wszystkie elementy UI wskakuja tutaj.
-	
-/*-----------------------------------------*/
-/*-Implementacja GameStateChangeListener: -*/
-/*-----------------------------------------*/			
-					
-	protected int gameState;
-				
-	@Override
-	public void onGameStateChange( int gameState ) {
-		this.gameState = gameState;
-	}		
+	//TODO: wszystkie elementy UI wskakuja tutaj.	
 	
 /*-----------------------------------------*/
 /*-         Funkcje pomocnicze:           -*/

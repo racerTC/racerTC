@@ -3,7 +3,7 @@ package com.games.racertc.objects;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 
-import com.games.racertc.graphics.Presentation;
+import com.games.racertc.gameplay.graphics.Presentation;
 import com.games.racertc.other.Vec2D;
 
 /**

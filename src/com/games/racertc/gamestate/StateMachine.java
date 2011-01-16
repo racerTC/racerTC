@@ -1,40 +1,71 @@
 package com.games.racertc.gamestate;
 
+import java.util.Stack;
 import java.util.Vector;
+
+import com.games.racertc.gameplay.Simulation;
+import com.games.racertc.gameplay.graphics.Presentation;
 
 /**
  * Maszyna stanow gry. Pozwala zazadac zmiany stanu gry. Po nastapieniu zadania
  * StateMachine informuje wszystkie zarejestrowane klasy o wystapieniu zmiany
  * stanu gry.
+ * 
+ * Stan gry jest definiowany poprzez pare symulacji oraz prezentacji, jakie w danym
+ * momencie sa aktywne i uzywane w glownej petli gry.
+ * @author Piotr Balut
  */
 public class StateMachine {
-
+	
 /*-----------------------------------------*/
 /*-     Implementacja maszyny stanow:     -*/
 /*-----------------------------------------*/		
 	
-	/** Przechowuje aktualny stan gry. */
-	private int state;
+	/** Przechowuje stos stanow gry. */
+	private Stack<GameState> stateStack = new Stack<GameState>();
 	
 	/** Obserwatorzy zmiany stanu. */
 	private Vector< GameStateChangeListener > listeners;
 	
 	/**
-	 * Ustawia stan gry i informuje o tym obserwatorow.
+	 * Ustawia stan gry i informuje o tym obserwatorow. Obserwatorzy informowani sa po przejsciu maszyny
+	 * do nowego stanu.
 	 * @param gameState nowy stan gry
 	 */
-	public void setGameState( int gameState ) {
-		state = gameState;
+	public void enterGameState( GameState gameState ) {
+		gameState.injectGlobalContext( sgc );
+		gameState.onStateMachineInsertion();
+		if( stateStack.size() != 0 ) {
+			stateStack.peek().leave();
+		}
+		stateStack.push( gameState );
+		gameState.enter();
 		for( int i = 0; i != listeners.size(); i++ ) {
 			listeners.get( i ).onGameStateChange( gameState );
+		}
+	}
+	
+	/**
+	 * Opuszcza aktualny stan gry i przechodzi do poprzedniego. Obserwatorzy informowanu sa o przejsciu
+	 * po przejsciu maszyny do poprzedniego stanu.
+	 */
+	public void leaveGameState() {
+		GameState old_state = stateStack.pop();
+		old_state.leave();
+		GameState new_state = stateStack.peek();
+		if( new_state != null )
+			new_state.enter();
+		for( int i = 0; i != listeners.size(); i++ ) {
+			listeners.get( i ).onGameStateChange( new_state );
+		old_state.onStateMachineExtraction();
 		}
 	}
 	
 	/** Pozwala sprawdzic aktualny stan gry. Jednak na ogol klasy, ktore
 	 * sa zainteresowane zmianami stanu gry powinny zarejestrowac sie
 	 * jako nasluchujace tych zmian. */
-	public int getGameState() {
-		return state;
+	public GameState getGameState() {
+		return stateStack.peek();
 	}
 	
 	/**
@@ -51,6 +82,16 @@ public class StateMachine {
 	 */
 	public void removeListener( GameStateChangeListener l ) {
 		listeners.remove( l );
+	}
+
+/*-----------------------------------------*/
+/*-        Komunikacja ze stanami:        -*/
+/*-----------------------------------------*/	
+	
+	public void postResolutionChange( int width, int height ) {
+		for( GameState gs : stateStack ) {
+			gs.onResolutionChanged(width, height);
+		}
 	}
 	
 /*-----------------------------------------*/
@@ -72,5 +113,18 @@ public class StateMachine {
 			instance = new StateMachine();
 		return instance;
 	}
+
+/*-----------------------------------------*/
+/*-      Obsluga danych globalnych:       -*/
+/*-----------------------------------------*/	
 	
+	StateGlobalContext sgc = null;
+	
+	public void setGlobalContext( StateGlobalContext sgc ) {
+		this.sgc = sgc;
+		for( GameState gs : stateStack ) {
+			gs.injectGlobalContext( sgc );
+		}
+	}	
+		
 }

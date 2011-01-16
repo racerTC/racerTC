@@ -9,6 +9,6 @@ public interface GameStateChangeListener {
 	 * Wolane po zmianie stanu gry.
 	 * @param gameState nowy stan gry.
 	 */
-	void onGameStateChange( int gameState );
+	void onGameStateChange( GameState gameState );
 	
 }

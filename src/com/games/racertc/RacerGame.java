@@ -1,7 +1,9 @@
 package com.games.racertc;
 
+import com.games.racertc.gameplay.StateIngame;
 import com.games.racertc.gamestate.GameState;
 import com.games.racertc.gamestate.GameStateChangeListener;
+import com.games.racertc.gamestate.StateGlobalContext;
 import com.games.racertc.gamestate.StateMachine;
 import com.games.racertc.ui.JoystickSingleTouchUI;
 import com.games.racertc.ui.TwoSlidersSingleTouchUI;
@@ -18,6 +20,7 @@ import android.view.Window;
 
 /**
  * Activity odpowiadajace prowadzenie rozgrywki.
+ * @author Piotr Balut
  */
 public class RacerGame extends Activity implements Callback, GameStateChangeListener {
 	
@@ -32,6 +35,9 @@ public class RacerGame extends Activity implements Callback, GameStateChangeList
 	
 	/** ID wybranej trasy */
 	private int trackId;
+	
+	/** Globalny kontekst aplikacji znany przez stany. */
+	StateGlobalContext sgc;
 	
 /*--------------------------------------*/
 /*-            Obsluga menu:           -*/
@@ -64,24 +70,6 @@ public class RacerGame extends Activity implements Callback, GameStateChangeList
 	}
 	
 /*--------------------------------------*/
-/*-          Zarzadzanie UI:           -*/
-/*--------------------------------------*/
-	
-	/** UIManager. */
-	private UIManager uiManager;
-	
-	/**
-	 * 
-	 * @param uiManager
-	 */
-	private void dispatchUIManager( UIManager uiManager ) {
-		//if( uiManager != null ) ???;
-		this.uiManager = uiManager;
-		racerView.setOnTouchListener( uiManager );
-		racerThread.setUIManager( uiManager );
-	}
-	
-/*--------------------------------------*/
 /*-     Obsluga zdarzen activity:      -*/
 /*--------------------------------------*/
 	
@@ -96,7 +84,7 @@ public class RacerGame extends Activity implements Callback, GameStateChangeList
 		requestWindowFeature( Window.FEATURE_NO_TITLE );
 		
 		setContentView(R.layout.game);
-		
+				
 		//tworzy View aplikacji:
 		racerView = (RacerGameView) findViewById( R.id.racergameview );
 		//tworzy obiekt zarzadzajacy glowna petla gry:
@@ -107,23 +95,19 @@ public class RacerGame extends Activity implements Callback, GameStateChangeList
 		);
 		//pozwala przygotowac sie do pracy RacerGameView
 		racerView.initialise();
-		//tworzy mendzera UI:
-		//dispatchUIManager( new JoystickSingleTouchUI( getResources() ) );
-		dispatchUIManager( new TwoSlidersSingleTouchUI( getResources() ) );
 		
-		//Ustawiamy stan gry na INTRO:
-		StateMachine.getInstance().setGameState( GameState.INTRO );
-		gameState = GameState.INTRO;
+		//tworzy globalny kontekst aplikacji dla stanow gry:
+		sgc = new StateGlobalContext();
+		sgc.racerView = racerView;
+		sgc.surfaceHolder = racerView.getHolder();
+		sgc.context = racerView.getContext();
+		sgc.resources = getResources();
+		StateMachine.getInstance().setGlobalContext( sgc );
 		
 		// Pobiera informacje o wybranym samochodzie i trasie
 		Intent i = getIntent();
 		carId = i.getIntExtra("_car", 0);
 		trackId = i.getIntExtra("_track", 0);
-		
-		//-uruchamianie rozgrywki "na chama" :P-//
-		racerThread.setupGame(carId, trackId);
-		gameState = GameState.GAME_ACTIVE;
-		//--------------------------------------//
 		
 		//rejestruje sie jako obserwator zmian stanu gry:
 		StateMachine.getInstance().addListener( this );
@@ -146,11 +130,23 @@ public class RacerGame extends Activity implements Callback, GameStateChangeList
 	@Override
 	protected void onPause() {
 		super.onPause();
+		if( gameState != null )
+			gameState.pause( true );
 		//TODO: pauzuje rozgrywle
 		//zagadka w LunarLander to samo jest wolane
 		//zarowno w Activity.onPause(), jak i w 
 		//View.onWindowFocusChanged. Czemu?
 	}
+	
+	/**
+	 * Wolane, kiedy aplikacja zostaje odpauzowana.
+	 */
+	@Override
+	protected void onResume() {
+		super.onResume();
+		if( gameState != null )
+			gameState.pause( false );
+	}	
 	
 	/**
 	 * Wolane aby umozliwic wyscigom zapisanie swojego stanu
@@ -176,8 +172,9 @@ public class RacerGame extends Activity implements Callback, GameStateChangeList
 	 */
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-		racerThread.setResolution( width, height );
-		uiManager.setResolution( width, height );
+		sgc.surfaceWidth = width;
+		sgc.surfaceHeight = height;
+		StateMachine.getInstance().postResolutionChange( width, height );
 	}
 
 	/**
@@ -186,6 +183,14 @@ public class RacerGame extends Activity implements Callback, GameStateChangeList
 	 */
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
+		/* Jednakowoz tuz przed odpaleniem watku, aktywujemy inicjalny stan maszyny stanow gry. */
+		if( gameState == null ) {	
+			//-uruchamianie rozgrywki "na chama" :P-//
+			GameState gs = new StateIngame(carId,trackId);
+			StateMachine.getInstance().enterGameState( gs );
+			//--------------------------------------//
+		}
+		/* Uruchamiamy gre. */
 		racerThread.start();
 	}
 
@@ -205,10 +210,10 @@ public class RacerGame extends Activity implements Callback, GameStateChangeList
 /*-Implementacja GameStateChangeListener: -*/
 /*-----------------------------------------*/			
 		
-	private int gameState;
+	private GameState gameState;
 		
 	@Override
-	public void onGameStateChange( int gameState ) {
+	public void onGameStateChange( GameState gameState ) {
 		this.gameState = gameState;
 		//TODO: reakcja na zmiany stanu.
 	}	

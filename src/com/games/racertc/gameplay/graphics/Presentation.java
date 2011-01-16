@@ -1,4 +1,4 @@
-package com.games.racertc.graphics;
+package com.games.racertc.gameplay.graphics;
 
 import java.util.ListIterator;
 
@@ -18,6 +18,7 @@ import android.view.SurfaceHolder;
 
 /**
  * Klasa odpowiadajaca za rysowanie gry.
+ * @author Piotr Balut
  */
 public class Presentation {
 
@@ -58,7 +59,6 @@ public class Presentation {
 	 */
 	public void initialise( Track track ) {
 		this.track = track;
-		//trackBitmap = track.getTrackGraphics();
 	}
 
 	/**
@@ -168,21 +168,14 @@ public class Presentation {
 /*-----------------------------------------*/	
 	
 	/**
-	 * Rysuje rozgrywke oraz UI. Zarzadza dostepem do obiektu Canvas kontekstu
-	 * graficznego.
+	 * Rysuje rozgrywke oraz UI.
 	 */
-	public void drawGame() {
-		//blokujemy canvas
-		Canvas canvas = surfaceHolder.lockCanvas();
-		
+	public void drawGame( Canvas canvas ) {
 		//rysuje rozgrywke
 		internalDrawGame( canvas );
 		
 		//na koniec rysuje UI:
 		uiManager.drawUI( canvas );
-		
-		//wysylamy zmiany na ekran:
-		surfaceHolder.unlockCanvasAndPost( canvas );
 		
 	}
 	

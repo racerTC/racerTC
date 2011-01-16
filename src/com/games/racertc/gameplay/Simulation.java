@@ -1,7 +1,8 @@
-package com.games.racertc;
+package com.games.racertc.gameplay;
 
 import java.util.Iterator;
 
+import com.games.racertc.MessageQueue;
 import com.games.racertc.gamestate.GameStateChangeListener;
 import com.games.racertc.gamestate.StateMachine;
 import com.games.racertc.messages.Message;
@@ -183,8 +184,6 @@ public class Simulation {
 			Car c = iter.next();
 			
 			simulate( c, dt );
-			
-
 			
 		}
 		

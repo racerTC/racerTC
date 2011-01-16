@@ -3,10 +3,14 @@ package com.games.racertc.objects;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 
-import com.games.racertc.graphics.Presentation;
+import com.games.racertc.gameplay.graphics.Presentation;
 import com.games.racertc.messages.Message;
 import com.games.racertc.other.Vec2D;
 
+/**
+ * Obiekt reprezentujacy samochod.
+ * @author Piotr Balut
+ */
 public class Car extends GameObject {
 
 	/**	Przechowuje numer pojazdu gracza na liscie pojazdow. */
