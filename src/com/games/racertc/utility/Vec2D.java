@@ -1,4 +1,4 @@
-package com.games.racertc.other;
+package com.games.racertc.utility;
 
 /**
  * Wektor dwuwymiarowy liczb zmiennoprzecinkowych.

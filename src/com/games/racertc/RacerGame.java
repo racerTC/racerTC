@@ -2,12 +2,8 @@ package com.games.racertc;
 
 import com.games.racertc.gameplay.StateIngame;
 import com.games.racertc.gamestate.GameState;
-import com.games.racertc.gamestate.GameStateChangeListener;
-import com.games.racertc.gamestate.StateGlobalContext;
 import com.games.racertc.gamestate.StateMachine;
-import com.games.racertc.ui.JoystickSingleTouchUI;
-import com.games.racertc.ui.TwoSlidersSingleTouchUI;
-import com.games.racertc.ui.UIManager;
+import com.games.racertc.gamestate.StateMachine.ChangeListener;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -22,7 +18,7 @@ import android.view.Window;
  * Activity odpowiadajace prowadzenie rozgrywki.
  * @author Piotr Balut
  */
-public class RacerGame extends Activity implements Callback, GameStateChangeListener {
+public class RacerGame extends Activity implements Callback, ChangeListener {
 	
 	/** Watek obslugujacy glowna petle gry. */
 	private RacerThread racerThread;
@@ -35,9 +31,6 @@ public class RacerGame extends Activity implements Callback, GameStateChangeList
 	
 	/** ID wybranej trasy */
 	private int trackId;
-	
-	/** Globalny kontekst aplikacji znany przez stany. */
-	StateGlobalContext sgc;
 	
 /*--------------------------------------*/
 /*-            Obsluga menu:           -*/
@@ -94,15 +87,13 @@ public class RacerGame extends Activity implements Callback, GameStateChangeList
 			getResources()
 		);
 		//pozwala przygotowac sie do pracy RacerGameView
-		racerView.initialise();
+		racerView.initialize();
 		
 		//tworzy globalny kontekst aplikacji dla stanow gry:
-		sgc = new StateGlobalContext();
-		sgc.racerView = racerView;
-		sgc.surfaceHolder = racerView.getHolder();
-		sgc.context = racerView.getContext();
-		sgc.resources = getResources();
-		StateMachine.getInstance().setGlobalContext( sgc );
+		Globals.racerView = racerView;
+		Globals.surfaceHolder = racerView.getHolder();
+		Globals.context = racerView.getContext();
+		Globals.resources = getResources();
 		
 		// Pobiera informacje o wybranym samochodzie i trasie
 		Intent i = getIntent();
@@ -110,7 +101,7 @@ public class RacerGame extends Activity implements Callback, GameStateChangeList
 		trackId = i.getIntExtra("_track", 0);
 		
 		//rejestruje sie jako obserwator zmian stanu gry:
-		StateMachine.getInstance().addListener( this );
+		StateMachine.GetInstance().addListener( this );
 		
 		//rejestruje sie jako sluchacz zmian w Surface programu
 		racerView.getHolder().addCallback( this );
@@ -131,7 +122,7 @@ public class RacerGame extends Activity implements Callback, GameStateChangeList
 	protected void onPause() {
 		super.onPause();
 		if( gameState != null )
-			gameState.pause( true );
+			gameState.onPause( true );
 		//TODO: pauzuje rozgrywle
 		//zagadka w LunarLander to samo jest wolane
 		//zarowno w Activity.onPause(), jak i w 
@@ -145,7 +136,7 @@ public class RacerGame extends Activity implements Callback, GameStateChangeList
 	protected void onResume() {
 		super.onResume();
 		if( gameState != null )
-			gameState.pause( false );
+			gameState.onPause( false );
 	}	
 	
 	/**
@@ -172,9 +163,9 @@ public class RacerGame extends Activity implements Callback, GameStateChangeList
 	 */
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-		sgc.surfaceWidth = width;
-		sgc.surfaceHeight = height;
-		StateMachine.getInstance().postResolutionChange( width, height );
+		Globals.surfaceWidth = width;
+		Globals.surfaceHeight = height;
+		StateMachine.GetInstance().updateResolution( width, height );
 	}
 
 	/**
@@ -187,7 +178,7 @@ public class RacerGame extends Activity implements Callback, GameStateChangeList
 		if( gameState == null ) {	
 			//-uruchamianie rozgrywki "na chama" :P-//
 			GameState gs = new StateIngame(carId,trackId);
-			StateMachine.getInstance().enterGameState( gs );
+			StateMachine.enterState( gs );
 			//--------------------------------------//
 		}
 		/* Uruchamiamy gre. */
@@ -211,11 +202,11 @@ public class RacerGame extends Activity implements Callback, GameStateChangeList
 /*-----------------------------------------*/			
 		
 	private GameState gameState;
-		
+
 	@Override
-	public void onGameStateChange( GameState gameState ) {
-		this.gameState = gameState;
+	public void notifyStateChanged(GameState newState) {
+		this.gameState = newState;
 		//TODO: reakcja na zmiany stanu.
-	}	
+	}
 	
 }

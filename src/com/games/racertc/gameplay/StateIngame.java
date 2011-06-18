@@ -4,15 +4,17 @@ import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.os.Debug;
+import android.view.View;
 
+import com.games.racertc.Globals;
 import com.games.racertc.R;
 import com.games.racertc.gameplay.graphics.Presentation;
 import com.games.racertc.gamestate.GameState;
 import com.games.racertc.objects.Car;
-import com.games.racertc.other.Vec2D;
 import com.games.racertc.tracks.Track;
 import com.games.racertc.ui.TwoSlidersSingleTouchUI;
 import com.games.racertc.ui.UIManager;
+import com.games.racertc.utility.Vec2D;
 
 /**
  * Reprezentuje stan w ktorym znajduje sie aplikacja podczas rozgrywki.
@@ -25,6 +27,8 @@ public class StateIngame extends GameState {
 	
 	/** Przechowuje obiekt rysujacy rozgrywke. */
 	Presentation presentation = null;
+	
+	UIManager uiMan;
 	
 	int carId, trackId;
 	
@@ -45,13 +49,8 @@ public class StateIngame extends GameState {
 	}
 
 	@Override
-	public void draw( Canvas canvas ) {
+	public void render( Canvas canvas ) {
 		presentation.drawGame( canvas );
-	}
-	
-	@Override
-	public boolean limitFramerate() {
-		return false;
 	}
 	
 /*-----------------------------------------*/
@@ -59,20 +58,22 @@ public class StateIngame extends GameState {
 /*-----------------------------------------*/	
 	
 	@Override
-	protected void onEnter() {
-		if( sgc == null ) return;
+	protected void onTouchListenerNeeded( View v ) {
+		uiMan = new TwoSlidersSingleTouchUI( Globals.resources );
+		v.setOnTouchListener( uiMan );
+	}
+	
+	@Override
+	public void onEnter( GameState oldState, boolean isEdgeState ) {
 		//TODO: loadscreen!
 		if( presentation == null ) {
-			presentation = new Presentation( sgc.surfaceHolder, sgc.resources );
+			presentation = new Presentation( Globals.surfaceHolder, Globals.resources );
 			simulation = new Simulation();
-			UIManager uiMan = new TwoSlidersSingleTouchUI( sgc.resources );
-			dispatchUIManager( uiMan );
 			presentation.setUIManager( uiMan );
-			uiManager.setResolution(sgc.surfaceWidth, sgc.surfaceHeight);
-			presentation.setResolution(sgc.surfaceWidth, sgc.surfaceHeight);
-			
-			setupGame(carId, trackId);
+	
+			setupGame( carId, trackId );
 		}
+		onResolutionChanged( Globals.surfaceWidth, Globals.surfaceHeight );
 	}
 	
 /*
@@ -99,7 +100,7 @@ public void setupGame(int carId, int trackId) {
 	//samochod:
 	int chosenCar;
 	
-	Resources resources = sgc.resources;
+	Resources resources = Globals.resources;
 	
 	switch(carId) {
 	case R.id.car_01:
@@ -166,7 +167,7 @@ public void setupGame(int carId, int trackId) {
 	 */
 	@Override
 	protected void onResolutionChanged( int width, int height ) {
-		if(uiManager != null) uiManager.setResolution(width, height);
+		if(uiMan != null) uiMan.setResolution(width, height);
 		if(presentation != null) presentation.setResolution(width, height);
 	}
 

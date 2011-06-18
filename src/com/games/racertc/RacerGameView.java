@@ -16,10 +16,8 @@ public class RacerGameView extends SurfaceView {
 	/**
 	 * Metoda powinna zostac wywolana po odebraniu klasy przez findViewById. Przygotowuje
 	 * RacerView do pracy.
-	 * @param presentation  
 	 */
-	public void initialise() {
-		//ponoc pomaga odbierac zdarzenia klawiszy! :D
+	public void initialize() {
 		setFocusable( true );
 	}
 		

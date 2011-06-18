@@ -8,7 +8,7 @@ import java.util.Vector;
 
 import com.games.racertc.objects.Car;
 import com.games.racertc.objects.GameObject;
-import com.games.racertc.other.Vec2D;
+import com.games.racertc.utility.Vec2D;
 
 import android.graphics.Bitmap;
 

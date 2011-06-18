@@ -2,14 +2,13 @@ package com.games.racertc.gameplay;
 
 import java.util.Iterator;
 
-import com.games.racertc.MessageQueue;
-import com.games.racertc.gamestate.GameStateChangeListener;
 import com.games.racertc.gamestate.StateMachine;
 import com.games.racertc.messages.Message;
 import com.games.racertc.messages.MessageFactory;
+import com.games.racertc.messages.MessageQueue;
 import com.games.racertc.objects.Car;
-import com.games.racertc.other.Vec2D;
 import com.games.racertc.tracks.Track;
+import com.games.racertc.utility.Vec2D;
 
 /**
  * Klasa odpowiadajaca za symulacje w grze.

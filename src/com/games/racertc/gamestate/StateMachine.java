@@ -1,130 +1,136 @@
 package com.games.racertc.gamestate;
 
+import java.util.EmptyStackException;
+import java.util.LinkedList;
 import java.util.Stack;
-import java.util.Vector;
 
-import com.games.racertc.gameplay.Simulation;
-import com.games.racertc.gameplay.graphics.Presentation;
+import com.games.racertc.commands.CommandQueue;
 
 /**
- * Maszyna stanow gry. Pozwala zazadac zmiany stanu gry. Po nastapieniu zadania
- * StateMachine informuje wszystkie zarejestrowane klasy o wystapieniu zmiany
- * stanu gry.
- * 
- * Stan gry jest definiowany poprzez pare symulacji oraz prezentacji, jakie w danym
- * momencie sa aktywne i uzywane w glownej petli gry.
+ * Maszyna stanow gry pozwala zarzadzac przejsciami pomiedzy stanami gry.
  * @author Piotr Balut
  */
 public class StateMachine {
-	
-/*-----------------------------------------*/
-/*-     Implementacja maszyny stanow:     -*/
-/*-----------------------------------------*/		
-	
-	/** Przechowuje stos stanow gry. */
-	private Stack<GameState> stateStack = new Stack<GameState>();
-	
-	/** Obserwatorzy zmiany stanu. */
-	private Vector< GameStateChangeListener > listeners;
-	
-	/**
-	 * Ustawia stan gry i informuje o tym obserwatorow. Obserwatorzy informowani sa po przejsciu maszyny
-	 * do nowego stanu.
-	 * @param gameState nowy stan gry
-	 */
-	public void enterGameState( GameState gameState ) {
-		gameState.injectGlobalContext( sgc );
-		gameState.onStateMachineInsertion();
-		if( stateStack.size() != 0 ) {
-			stateStack.peek().leave();
-		}
-		stateStack.push( gameState );
-		gameState.enter();
-		for( int i = 0; i != listeners.size(); i++ ) {
-			listeners.get( i ).onGameStateChange( gameState );
-		}
-	}
-	
-	/**
-	 * Opuszcza aktualny stan gry i przechodzi do poprzedniego. Obserwatorzy informowanu sa o przejsciu
-	 * po przejsciu maszyny do poprzedniego stanu.
-	 */
-	public void leaveGameState() {
-		GameState old_state = stateStack.pop();
-		old_state.leave();
-		GameState new_state = stateStack.peek();
-		if( new_state != null )
-			new_state.enter();
-		for( int i = 0; i != listeners.size(); i++ ) {
-			listeners.get( i ).onGameStateChange( new_state );
-		old_state.onStateMachineExtraction();
-		}
-	}
-	
-	/** Pozwala sprawdzic aktualny stan gry. Jednak na ogol klasy, ktore
-	 * sa zainteresowane zmianami stanu gry powinny zarejestrowac sie
-	 * jako nasluchujace tych zmian. */
-	public GameState getGameState() {
-		return stateStack.peek();
-	}
-	
-	/**
-	 * Rejestruje obserwatora zmian stanu.
-	 * @param l obserwator zmian stanu.
-	 */
-	public void addListener( GameStateChangeListener l ) {
-		listeners.add( l );
-	}
-	
-	/**
-	 * Usuwa z listy obserwatorow zadanego obserwatora.
-	 * @param l obserwator do usuniecia z listy.
-	 */
-	public void removeListener( GameStateChangeListener l ) {
-		listeners.remove( l );
-	}
 
 /*-----------------------------------------*/
-/*-        Komunikacja ze stanami:        -*/
-/*-----------------------------------------*/	
+/*-     Implementacja maszyny stanow:     -*/
+/*-----------------------------------------*/			
 	
-	public void postResolutionChange( int width, int height ) {
-		for( GameState gs : stateStack ) {
-			gs.onResolutionChanged(width, height);
+	/**
+	 * Stos stanow gry.
+	 */
+	private Stack<GameState> stateStack = new Stack<GameState>();
+
+	/**
+	 * Aktywuje zadany stan. Dla dotychczasowego, opuszczanego stanu wolana jest metoda onLeave, nastepnie dla nowego stanu
+	 * wolane jest onEneter. Po zmianie stanu sluchacze zmian stanu informowani sa o przejsciu maszyny do nowego stanu.<br><br>
+	 * Przejscie pomiedzy stanami nie zostanie zostanie wykonane natychmiastowo - wykonanie przejscia zostanie odlozone do
+	 * czasu zakonczenia aktualnego przejscia glownej petli gry.
+	 * @param state
+	 */
+	public static void enterState( GameState state ) {
+		StateTransitionCommand stc = new StateTransitionCommand();
+		stc.action = StateTransitionCommand.ENTER;
+		stc.state = state;
+		CommandQueue.GetInstance().push( stc );
+	}
+	
+	protected void immediateEnterState( GameState state ) {
+		GameState prev;
+		try {
+			 prev = stateStack.peek();
+		} catch( EmptyStackException e ) {
+			prev = null;
 		}
+		if( prev != null )
+			prev.leave( state, false );
+		stateStack.push( state );
+		state.enter( prev, true );
+		notifyListeners( state );
+		
+	}
+	
+	/**
+	 * 
+	 */
+	public static void leaveState() {
+		
+	}
+	
+	protected void immediateLeaveState() {
+		GameState prev = stateStack.pop();
+		GameState state = stateStack.peek();
+		prev.leave( state, true );
+		state.enter( prev, false );
+		notifyListeners( state );
+		
 	}
 	
 /*-----------------------------------------*/
 /*-       Implementacja singletonu:       -*/
-/*-----------------------------------------*/	
+/*-----------------------------------------*/		
 	
-	private StateMachine() {
-		listeners = new Vector< GameStateChangeListener >();
-	};
+	private static final StateMachine instance = new StateMachine();
 	
-	private static StateMachine instance;
-
-	/**
-	 * Pozwala na dostep do jedynej dozwolonej instancji StateMachine.
-	 * @return instancja StateMachine
-	 */
-	public static StateMachine getInstance() {
-		if( instance == null )
-			instance = new StateMachine();
+	private StateMachine() {}
+	
+	public static StateMachine GetInstance() {
 		return instance;
 	}
 
 /*-----------------------------------------*/
-/*-      Obsluga danych globalnych:       -*/
+/*-      Implementacja obserwatora:       -*/
 /*-----------------------------------------*/	
 	
-	StateGlobalContext sgc = null;
-	
-	public void setGlobalContext( StateGlobalContext sgc ) {
-		this.sgc = sgc;
-		for( GameState gs : stateStack ) {
-			gs.injectGlobalContext( sgc );
-		}
-	}	
+	/**
+	 * Interface, ktory pozwala zarejestrowac sie klasie jako sluchacz zmian stanow gry.
+	 */
+	public static interface ChangeListener {
 		
+		/**
+		 * Wolane przez StateMachine dla kazdego zarejestrowanego sluchacza po zmianie stanu.
+		 * Maszyna stanow gwarantuje, iz stany beda zmieniane pomiedzy przejsciami glownej
+		 * petli gry, tak wiec notifyStateChanged nie zostanie nigdy wywolane w trakcie przetwarzania
+		 * aktualnie aktywnego stanu.
+		 * @param newState Nowy stan.
+		 */
+		public void notifyStateChanged( GameState newState );
+		
+	} // interface ChangeListener
+	
+	/**
+	 * Lista przechowujaca wszystkich sluchaczy zmian stanu maszyny.
+	 */
+	private LinkedList<ChangeListener> changeListeners = new LinkedList<ChangeListener>();
+	
+	/**
+	 * Rejestruje nowego sluchacza zmiany stanow. Zostaje on natychmiast poinformowany o
+	 * aktualnie aktywnym stanie.
+	 * @param listener
+	 */
+	public void addListener( ChangeListener listener ) {
+		try {
+			listener.notifyStateChanged( stateStack.peek() );
+		} catch( EmptyStackException e ) {
+			listener.notifyStateChanged( null );
+		}
+		changeListeners.add( listener );
+	}
+	
+	public void removeListener( ChangeListener listener ) {
+		changeListeners.remove( listener );
+	}
+	
+	private void notifyListeners( GameState state ) {
+		for( ChangeListener cl : changeListeners ) {
+			cl.notifyStateChanged( state );
+		}
+	}
+
+	public void updateResolution(int width, int height) {
+		for( GameState gs : stateStack ) {
+			gs.onResolutionChanged( width, height );
+		}
+	}
+	
 }

@@ -1,19 +1,19 @@
 package com.games.racertc.gameplay.graphics;
+
 import java.util.Iterator;
-import java.util.ListIterator;
 
 import com.games.racertc.R;
 import com.games.racertc.R.drawable;
+import com.games.racertc.gameplay.graphics.Presentation;
 import com.games.racertc.objects.Car;
 import com.games.racertc.objects.GameObject;
-import com.games.racertc.other.Vec2D;
+import com.games.racertc.utility.Vec2D;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.LightingColorFilter;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;

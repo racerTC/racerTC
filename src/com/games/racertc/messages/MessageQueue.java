@@ -1,14 +1,15 @@
-package com.games.racertc;
+package com.games.racertc.messages;
 
 import java.util.LinkedList;
 import java.util.List;
 
-import com.games.racertc.messages.Message;
 
 /**
  * Synchronizowana kolejka FIFO sluzaca wymianie wiadomosci miedzy watkami.
+ * 
+ * @author Piotr Balut
  */
-public class MessageQueue {
+public final class MessageQueue {
 
 	public int size() {
 		return messageQueue.size();
@@ -25,15 +26,13 @@ public class MessageQueue {
 	
 	/** MessageQueue jest singletonem, ktorego jedyna dozwolona instancje okresla
 	 * ta zmienna. */
-	private static MessageQueue instance;
+	private final static MessageQueue instance = new MessageQueue();
 	
 	/**
 	 * Pozwala na dostep do jedynej dozwolonej instancji MessageQueue.
 	 * @return instancja MessageQueue
 	 */
 	public static MessageQueue getInstance() {
-		if( instance == null )
-			instance = new MessageQueue();
 		return instance;
 	}
 

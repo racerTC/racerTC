@@ -1,9 +1,10 @@
 package com.games.racertc;
 
+import com.games.racertc.commands.Command;
+import com.games.racertc.commands.CommandQueue;
 import com.games.racertc.gamestate.GameState;
-import com.games.racertc.gamestate.GameStateChangeListener;
 import com.games.racertc.gamestate.StateMachine;
-import com.games.racertc.ui.UIManager;
+import com.games.racertc.gamestate.StateMachine.ChangeListener;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -16,9 +17,9 @@ import android.view.SurfaceHolder;
  * za symulacje i rysowanie w grze, a takze posredniczy w komunikacji z nimi.
  * @author Piotr Balut
  */
-public class RacerThread extends Thread implements GameStateChangeListener {
+public class RacerThread extends Thread implements ChangeListener {
 	
-	public final static boolean MEASURE_FPS = true;
+	public final static boolean LIMIT_FRAMERATE = false;
 	
 	/**
 	 * Docelowy czas trwania pojedynczej klatki w milisekundach. Obecne
@@ -38,7 +39,7 @@ public class RacerThread extends Thread implements GameStateChangeListener {
 		this.resources = resources;
 		
 		//rejestruje sie jako obserwator zmian stanu gry:
-		StateMachine state_machine = StateMachine.getInstance();
+		StateMachine state_machine = StateMachine.GetInstance();
 		state_machine.addListener( this );
 	}
 
@@ -58,38 +59,50 @@ public class RacerThread extends Thread implements GameStateChangeListener {
 		//do mierzenia sredniej ilosci fpsow:
 		int accumulated_time = 0, frame_count = 0;
 		
-		while( run ) if( gameState != null ) {
+		while( run ) {
 			
 			long current_time = SystemClock.uptimeMillis();
 			long time_quantum = current_time - previous_time;
 			previous_time = current_time;
 			
-			//Obliczanie FPS'ow:
-			if( MEASURE_FPS ) {
-				accumulated_time += time_quantum;
-				frame_count++;
-				if( accumulated_time >= 500 ) {
-					UIManager uiman = gameState.getUIManager();
-					if( uiman != null )
-						uiman.setFPS( (long) ((frame_count / (accumulated_time * 0.001f))) );
-					frame_count	= accumulated_time = 0;
-				}
+			final CommandQueue commandQueue = CommandQueue.GetInstance();
+			Command c = commandQueue.pop(); 
+			while( c != null ) {
+				c.execute();
+				c = commandQueue.pop();
 			}
-
-			/* Przetwarza stan: */
-			if( time_quantum > 0 )
-				gameState.process( time_quantum ); //dt - kwant czasu
 			
-			/* odpal rysowanie: */
+			if( gameState != null ) {
+				
+				//Obliczanie FPS'ow:
+				if( Globals.MEASURE_FPS ) {
+					accumulated_time += time_quantum;
+					frame_count++;
+					if( accumulated_time >= 500 ) {
+						Globals.fps = (int) ((frame_count / (accumulated_time * 0.001f)));
+						//UIManager uiman = gameState.getUIManager();
+						//if( uiman != null )
+						//	uiman.setFPS( (long) ((frame_count / (accumulated_time * 0.001f))) );
+						frame_count	= accumulated_time = 0;
+					}
+				}
+	
+				/* Przetwarza stan: */
+				if( time_quantum > 0 )
+					gameState.process( time_quantum ); //dt - kwant czasu
+				
+				/* odpal rysowanie: */
+				
+				//blokujemy canvas
+				Canvas canvas = surfaceHolder.lockCanvas();
+				gameState.render( canvas );
+				//wysylamy zmiany na ekran:
+				surfaceHolder.unlockCanvasAndPost( canvas );				
+				
+			}
 			
-			//blokujemy canvas
-			Canvas canvas = surfaceHolder.lockCanvas();
-			gameState.draw( canvas );
-			//wysylamy zmiany na ekran:
-			surfaceHolder.unlockCanvasAndPost( canvas );
-							
-			/* Ograniczenie ilosci klatek na sekunde - o ile stan na to pozwala. */
-			if( gameState.limitFramerate() ) {
+			/* Ograniczenie ilosci klatek na sekunde */
+			else if( LIMIT_FRAMERATE || gameState == null ) {
 				//oblicza czas jaki watek bedzie spal
 				long finished_time = SystemClock.uptimeMillis();
 				long sleep_time = TARGET_FRAME_DURATION - ( finished_time - current_time );
@@ -97,7 +110,6 @@ public class RacerThread extends Thread implements GameStateChangeListener {
 				if( sleep_time > 0 )
 					SystemClock.sleep( sleep_time );
 			}
-			
 		}
 		
 	}
@@ -107,11 +119,10 @@ public class RacerThread extends Thread implements GameStateChangeListener {
 /*-----------------------------------------*/			
 				
 	private GameState gameState = null;
-				
+
 	@Override
-	public void onGameStateChange( GameState gameState ) {
-		this.gameState = gameState;
-		//TODO: reakcja na zmiany stanu.
+	public void notifyStateChanged(GameState newState) {
+		gameState = newState;
 	}
 	
 }

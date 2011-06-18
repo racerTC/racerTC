@@ -4,7 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 
 import com.games.racertc.gameplay.graphics.Presentation;
-import com.games.racertc.other.Vec2D;
+import com.games.racertc.utility.Vec2D;
 
 /**
  * Ogolna klasa reprezentujaca dowolny obiekt znajdujacy sie na torze.

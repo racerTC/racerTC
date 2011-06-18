@@ -1,10 +1,9 @@
 package com.games.racertc.ui;
 
-import com.games.racertc.MessageQueue;
-import com.games.racertc.gamestate.GameStateChangeListener;
-import com.games.racertc.gamestate.StateMachine;
+import com.games.racertc.Globals;
 import com.games.racertc.messages.Message;
 import com.games.racertc.messages.MessageFactory;
+import com.games.racertc.messages.MessageQueue;
 import com.games.racertc.objects.Car;
 
 import android.graphics.Canvas;
@@ -68,7 +67,7 @@ public abstract class UIManager implements OnTouchListener {
 	 * @param canvas Canvas na ktorym narysowany zostanie interface uzytkownika.
 	 */
 	public void drawUI( Canvas canvas ) {
-		canvas.drawText( "FPS: " + fps, width - 50f, 20f, new Paint() );
+		canvas.drawText( "FPS: " + Globals.fps, width - 50f, 20f, new Paint() );
 	}
 	
 	//TODO: wszystkie elementy UI wskakuja tutaj.	

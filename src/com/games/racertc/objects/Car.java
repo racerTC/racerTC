@@ -5,7 +5,7 @@ import android.graphics.drawable.Drawable;
 
 import com.games.racertc.gameplay.graphics.Presentation;
 import com.games.racertc.messages.Message;
-import com.games.racertc.other.Vec2D;
+import com.games.racertc.utility.Vec2D;
 
 /**
  * Obiekt reprezentujacy samochod.

@@ -1,9 +1,8 @@
 package com.games.racertc.ui;
 
+import com.games.racertc.Globals;
 import com.games.racertc.R;
-import com.games.racertc.RacerThread;
 import com.games.racertc.messages.Message;
-import com.games.racertc.objects.Car;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -173,7 +172,7 @@ public class TwoSlidersSingleTouchUI extends UIManager {
 		canvas.drawBitmap( upDown, udPosX, udPosY, null );
 		canvas.drawBitmap( galka, lrGalkaX - 4.5f, lrCenterY - 6.5f, null );
 		canvas.drawBitmap( galka, udCenterX - 4.5f, udGalkaY - 5f, null );
-		if( RacerThread.MEASURE_FPS )
+		if( Globals.MEASURE_FPS )
 			super.drawUI( canvas );
 	}
 
