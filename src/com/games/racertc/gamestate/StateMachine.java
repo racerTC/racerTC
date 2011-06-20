@@ -51,10 +51,10 @@ public class StateMachine {
 	}
 	
 	/**
-	 * 
+	 * Leaves current state.
 	 */
 	public static void leaveState() {
-		
+		// TODO: finish this method!
 	}
 	
 	protected void immediateLeaveState() {

@@ -19,6 +19,7 @@ public abstract class GameState implements OnTouchListener {
 	GameState previousState = null;
 	
 	boolean paused = false;
+
 	
 /*-----------------------------------------*/
 /*-               Zdarzenia:              -*/
@@ -89,6 +90,7 @@ public abstract class GameState implements OnTouchListener {
 	
 	/**
 	 * Wolane przez maszyne stanow podczas uruchomienia stanu, po uruchomieniu leave poprzedniego stanu.
+	 * TODO: wspomniec o pauzowaniu.
 	 * @param oldState Stan, ktory wlasnie przestanie byc aktywny.
 	 * @param isEdgeState Przyjmuje wartosc <b>true</b>, jezeli stan jest nowym stanem w maszynie stanow
 	 * (tzn. przejscie do niego nastapilo wskutek dodania nowego stanu do maszyny).
@@ -97,16 +99,23 @@ public abstract class GameState implements OnTouchListener {
 		previousState = oldState;
 		onTouchListenerNeeded( Globals.racerView );
 		onEnter( oldState, isEdgeState );
+		if( oldState != null )
+			if( oldState.paused != paused )
+				onPause( paused );
 	}
 	
 	/**
 	 * Wolane przez maszyne stanow podczas opuszczania stanu, przed uruchomieniem enter nowego stanu.
+	 * TODO: wspomniec o pauzowaniu.
 	 * @param newState Stan, ktory wkrotce bedzie aktywny.
 	 * @param isEdgeState Przyjmuje wartosc <b>true</b>, jezeli stan po opuszczeniu zostanie usuniety z
 	 * maszyny (tzn. jego opuszczenie nie wynika z dodania stanu nadrzednego).
 	 */
 	final protected void leave( GameState newState, boolean isEdgeState ) {
 		onLeave( newState, isEdgeState );
+		if( newState != null )
+			if( newState.paused != paused )
+				newState.onPause( paused );
 	}
 
 /*-----------------------------------------*/

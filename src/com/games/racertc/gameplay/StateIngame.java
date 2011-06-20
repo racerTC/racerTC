@@ -10,6 +10,8 @@ import com.games.racertc.Globals;
 import com.games.racertc.R;
 import com.games.racertc.gameplay.graphics.Presentation;
 import com.games.racertc.gamestate.GameState;
+import com.games.racertc.gamestate.StateMachine;
+import com.games.racertc.gamestate.StatePaused;
 import com.games.racertc.objects.Car;
 import com.games.racertc.tracks.Track;
 import com.games.racertc.ui.TwoSlidersSingleTouchUI;
@@ -74,6 +76,16 @@ public class StateIngame extends GameState {
 			setupGame( carId, trackId );
 		}
 		onResolutionChanged( Globals.surfaceWidth, Globals.surfaceHeight );
+	}
+	
+	/**
+	 * When state is paused, enters StatePaused.
+	 */
+	@Override
+	public void onPause( boolean isPaused ) {
+		super.onPause( isPaused );
+		if( isPaused )
+			StateMachine.enterState( new StatePaused() );
 	}
 	
 /*
