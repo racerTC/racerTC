@@ -33,6 +33,8 @@ public class RacerThread extends Thread implements ChangeListener {
 	
 	final Resources resources;
 	
+	long previous_time;
+	
 	public RacerThread( SurfaceHolder surfaceHolder, Context context, Resources resources ) {
 		this.surfaceHolder = surfaceHolder;
 		this.context = context;
@@ -55,7 +57,7 @@ public class RacerThread extends Thread implements ChangeListener {
 	@Override
 	public void run() {
 		
-		long previous_time = SystemClock.uptimeMillis();
+		previous_time = SystemClock.uptimeMillis();
 		//do mierzenia sredniej ilosci fpsow:
 		int accumulated_time = 0, frame_count = 0;
 		
@@ -123,6 +125,7 @@ public class RacerThread extends Thread implements ChangeListener {
 	@Override
 	public void notifyStateChanged(GameState newState) {
 		gameState = newState;
+		previous_time = SystemClock.uptimeMillis();
 	}
 	
 }
