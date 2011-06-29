@@ -14,7 +14,7 @@ import com.games.racertc.gamestate.StateMachine;
 import com.games.racertc.gamestate.StatePaused;
 import com.games.racertc.objects.Car;
 import com.games.racertc.tracks.Track;
-import com.games.racertc.ui.TwoSlidersSingleTouchUI;
+import com.games.racertc.ui.SteeringWheelUI;
 import com.games.racertc.ui.UIManager;
 import com.games.racertc.utility.Vec2D;
 
@@ -61,7 +61,7 @@ public class StateIngame extends GameState {
 	
 	@Override
 	protected void onTouchListenerNeeded( View v ) {
-		uiMan = new TwoSlidersSingleTouchUI( Globals.resources );
+		uiMan = new SteeringWheelUI( Globals.resources );
 		v.setOnTouchListener( uiMan );
 	}
 	
