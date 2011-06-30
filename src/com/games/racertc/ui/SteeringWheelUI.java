@@ -110,7 +110,7 @@ class SteeringWheel{
 		
 		onScreenPosition=new PointF(parent.width-radius-40, parent.height-radius-30);
 		
-		bitmap=BitmapFactory.decodeResource(resources, R.drawable.wheel);
+		bitmap=BitmapFactory.decodeResource(resources, R.drawable.ui_wheel);
 		
 		// Skalujemy bitmape w zaleznosci od podanego promienia
 		bitmap=Bitmap.createScaledBitmap(bitmap, (int)radius*2, (int)radius*2, true);
