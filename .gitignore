@@ -1,0 +1,8 @@
+# Ignore SVN repo:
+.svn/
+
+# Ignore auto-generated project files and folders:
+gen/
+bin/
+.classpath
+.project
